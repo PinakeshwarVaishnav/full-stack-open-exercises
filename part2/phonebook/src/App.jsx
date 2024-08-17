@@ -36,8 +36,23 @@ const App = () => {
     }
 
     setPersons([...persons, { name: newName, number: newNumber }]);
-    setNewName("");
-    setNewNumber("");
+
+    const newUser = {
+      name: newName,
+      number: newNumber,
+      id: Math.floor(Math.random() * 10000),
+    };
+
+    axios
+      .post("http://localhost:3001/persons", newUser)
+      .then((response) => {
+        console.log("User added:", response.data);
+        setNewName("");
+        setNewNumber("");
+      })
+      .catch((error) => {
+        console.log("Error adding user:", error);
+      });
   };
 
   const handleSearchChange = (event) => {
