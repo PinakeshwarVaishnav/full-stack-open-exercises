@@ -3,6 +3,7 @@ import axios from "axios";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import users from "./services/users";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -12,9 +13,8 @@ const App = () => {
 
   useEffect(() => {
     console.log("effect");
-    axios.get("http://localhost:3001/persons").then((response) => {
-      console.log("promise fulfilled");
-      setPersons(response.data);
+    users.getAll().then((initialUsers) => {
+      setPersons(initialUsers);
     });
   }, []);
   console.log("render", persons.length, "persons");
@@ -43,16 +43,11 @@ const App = () => {
       id: Math.floor(Math.random() * 10000),
     };
 
-    axios
-      .post("http://localhost:3001/persons", newUser)
-      .then((response) => {
-        console.log("User added:", response.data);
-        setNewName("");
-        setNewNumber("");
-      })
-      .catch((error) => {
-        console.log("Error adding user:", error);
-      });
+    users.create(newUser).then((response) => {
+      setPersons(persons.concat(response));
+      setNewName("");
+      setNewNumber("");
+    });
   };
 
   const handleSearchChange = (event) => {
