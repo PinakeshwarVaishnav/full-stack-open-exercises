@@ -40,7 +40,7 @@ const App = () => {
     const newUser = {
       name: newName,
       number: newNumber,
-      id: Math.floor(Math.random() * 10000),
+      id: String(Math.floor(Math.random() * 10000)),
     };
 
     users.create(newUser).then((response) => {
@@ -58,6 +58,22 @@ const App = () => {
     person.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleDelete = (id, name) => {
+    if (window.confirm(`Delete "${name}"`)) {
+      axios
+        .delete(`http://localhost:3001/persons/${id}`)
+        .then(() => {
+          console.log("Entry deleted successfully");
+          users.getAll().then((initialUsers) => {
+            setPersons(initialUsers);
+          });
+        })
+        .catch((error) => {
+          console.error("Error deleting entry:", error);
+        });
+    }
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -74,7 +90,7 @@ const App = () => {
         handleButtonClick={handleButtonClick}
       />
       <h3>Numbers</h3>
-      <Persons filteredPersons={filteredPersons} />
+      <Persons filteredPersons={filteredPersons} handleDelete={handleDelete} />
     </div>
   );
 };
