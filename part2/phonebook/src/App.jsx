@@ -59,7 +59,7 @@ const App = () => {
   );
 
   const handleDelete = (id, name) => {
-    if (window.confirm(`Delete "${name}"`)) {
+    if (window.confirm(`Delete ${name} ?`)) {
       axios
         .delete(`http://localhost:3001/persons/${id}`)
         .then(() => {
