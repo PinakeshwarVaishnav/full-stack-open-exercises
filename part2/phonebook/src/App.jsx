@@ -30,24 +30,46 @@ const App = () => {
   const handleButtonClick = (event) => {
     event.preventDefault();
 
-    if (persons.some((person) => person.name === newName)) {
-      alert(`${newName} is already added to the phonebook`);
-      return;
+    const existingUser = persons.find((person) => person.name === newName);
+
+    if (existingUser) {
+      if (
+        window.confirm(
+          `${existingUser} is already added to phonebook, replace the old number with a new one?`
+        )
+      ) {
+        axios
+          .put(`http://localhost:3001/persons/${existingUser.id}`, {
+            ...existingUser,
+            number: newNumber,
+          })
+          .then((response) => {
+            console.log("Update successful: ", response.data);
+            const updatedState = persons.map((person) =>
+              person.id === newName.id
+                ? { ...person, number: newNumber }
+                : person
+            );
+            setPersons(updatedState);
+          })
+          .catch((error) => {
+            console.error("Error updating data:", error);
+          });
+      }
+    } else {
+      setPersons([...persons, { name: newName, number: newNumber }]);
+      const newUser = {
+        name: newName,
+        number: newNumber,
+        id: String(Math.floor(Math.random() * 10000)),
+      };
+
+      users.create(newUser).then((response) => {
+        setPersons(persons.concat(response));
+        setNewName("");
+        setNewNumber("");
+      });
     }
-
-    setPersons([...persons, { name: newName, number: newNumber }]);
-
-    const newUser = {
-      name: newName,
-      number: newNumber,
-      id: String(Math.floor(Math.random() * 10000)),
-    };
-
-    users.create(newUser).then((response) => {
-      setPersons(persons.concat(response));
-      setNewName("");
-      setNewNumber("");
-    });
   };
 
   const handleSearchChange = (event) => {
