@@ -11,9 +11,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [notificationMessage, setNotificationMessage] = useState(
-    "some error happened..."
-  );
+  const [notificationMessage, setNotificationMessage] = useState("");
 
   useEffect(() => {
     console.log("effect");
@@ -39,7 +37,7 @@ const App = () => {
     if (existingUser) {
       if (
         window.confirm(
-          `${existingUser} is already added to phonebook, replace the old number with a new one?`
+          `${existingUser.name} is already added to phonebook, replace the old number with a new one?`
         )
       ) {
         axios
@@ -50,11 +48,14 @@ const App = () => {
           .then((response) => {
             console.log("Update successful: ", response.data);
             const updatedState = persons.map((person) =>
-              person.id === newName.id
+              person.name === newName
                 ? { ...person, number: newNumber }
                 : person
             );
             setPersons(updatedState);
+            setNotificationMessage(`Updated ${newName}`);
+            setNewName("");
+            setNewNumber("");
           })
           .catch((error) => {
             console.error("Error updating data:", error);
@@ -72,6 +73,7 @@ const App = () => {
         setPersons(persons.concat(response));
         setNewName("");
         setNewNumber("");
+        setNotificationMessage(`Added ${newName}`);
       });
     }
   };
@@ -103,7 +105,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notificationMessage} />
+      <Notification message={notificationMessage} duration={3000} />
       <Filter
         searchQuery={searchQuery}
         handleSearchChange={handleSearchChange}
