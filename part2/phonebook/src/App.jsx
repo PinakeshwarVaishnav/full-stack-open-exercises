@@ -5,6 +5,7 @@ import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import users from "./services/users";
 import Notification from "./components/Notification";
+import ErrorMessage from "./components/Error";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -12,6 +13,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [notificationMessage, setNotificationMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     console.log("effect");
@@ -58,7 +60,13 @@ const App = () => {
             setNewNumber("");
           })
           .catch((error) => {
+            setErrorMessage(
+              `Information of ${newName} has already been removed from server`
+            );
+            setPersons(persons.filter((person) => person.name !== newName));
             console.error("Error updating data:", error);
+            setNewName("");
+            setNewNumber("");
           });
       }
     } else {
@@ -106,6 +114,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <Notification message={notificationMessage} duration={3000} />
+      <ErrorMessage message={errorMessage} duration={3000} />
       <Filter
         searchQuery={searchQuery}
         handleSearchChange={handleSearchChange}
