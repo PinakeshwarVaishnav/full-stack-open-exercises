@@ -57,8 +57,15 @@ app.post('/api/persons', (request, response) => {
   const body = request.body
 
   if (!body.name || !body.number) {
-    console.log(body)
+    console.log('content missing', body)
     return response.status(400).json({error: 'content missing'})
+  }
+
+  const nameExists = persons.some(person => person.name.toLowerCase() === body.name.toLowerCase())
+
+  if (nameExists) {
+    console.log(body.name, ' already exists')
+    return response.status(400).json({error: `${body.name} already exists in the phonebook`})
   }
 
   const person = {
@@ -68,7 +75,7 @@ app.post('/api/persons', (request, response) => {
   }
 
   persons = persons.concat(person)
-  console.log('New entry created successfully')
+  console.log('New entry created successfully', person)
 
   response.json(person)
 })
