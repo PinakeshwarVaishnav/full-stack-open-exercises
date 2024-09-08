@@ -49,14 +49,14 @@ app.delete('/api/persons/:id', (request, response) => {
 })
 
 const generateId = () => {
-  const maxId = persons.length > 0 ? Math.max(...persons.map(n => Number(n.id))) : 0
-  return String(maxId + 1)
+  const randomId = Math.floor(Math.random() * 1e16)
+  return String(randomId)
 }
 
 app.post('/api/persons', (request, response) => {
   const body = request.body
 
-  if (!body.content) {
+  if (!body.name || !body.number) {
     console.log(body)
     return response.status(400).json({error: 'content missing'})
   }
