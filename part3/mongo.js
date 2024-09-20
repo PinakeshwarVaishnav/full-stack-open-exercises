@@ -22,8 +22,15 @@ const personSchema = new mongoose.Schema({
 
 const Person = mongoose.model('Person', personSchema)
 
-const person =
-  person.save().then(result => {
-    console.log()
-    mongoose.connection.close()
-  })
+const person = new Person({
+  name: name,
+  number: number
+})
+person.save().then(result => {
+  console.log(`added ${name} number ${number} to phonebook`)
+  mongoose.connection.close()
+}).catch(err => {
+  console.error(`error in saving ${person} to the database`)
+  mongoose.connection.close().then(() => console.log('connection closed'))
+    .catch(closeErr => console.error('Error closing connection :', closeErr))
+})
