@@ -10,6 +10,7 @@ morgan.token('body', (req) => JSON.stringify(req.body))
 app.use(morgan(':method :url :status :response-time ms - Body::body'))
 app.use(express.static('dist'))
 const Person = require('./models/person')
+const { default: mongoose } = require('mongoose')
 
 let persons = [
   {
@@ -65,29 +66,23 @@ const generateId = () => {
 
 app.post('/api/persons', (request, response) => {
   const body = request.body
+  const { name, number } = body
 
-  if (!body.name || !body.number) {
-    console.log('content missing', body)
-    return response.status(400).json({ error: 'content missing' })
+  if (typeof name !== 'string' || typeof number !== 'number') {
+    console.log('invalid input: ', body)
+    return response.status(400).json({ error: 'invalid input' })
   }
-
-  const nameExists = persons.some(person => person.name.toLowerCase() === body.name.toLowerCase())
-
-  if (nameExists) {
-    console.log(body.name, ' already exists')
-    return response.status(400).json({ error: `${body.name} already exists in the phonebook` })
+  else {
+    const newPerson = new Person(body)
+    newPerson.save()
+      .then(result => {
+        console.log(`added ${name} number ${number} to phonebook`)
+        response.status(201).json(newPerson)
+      })
+      .catch(err => {
+        console.error(`error in saving ${newPerson} to the database`, err)
+      })
   }
-
-  const person = {
-    id: generateId(),
-    name: body.name,
-    number: body.number,
-  }
-
-  persons = persons.concat(person)
-  console.log('New entry created successfully', person)
-
-  response.json(person)
 })
 
 app.get('/info', (request, response) => {
@@ -95,7 +90,7 @@ app.get('/info', (request, response) => {
   response.send(`Phonebook has info for ${persons.length}<br/><br/>${requestTime}`)
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on ${PORT}`)
 })
