@@ -55,6 +55,27 @@ app.get('/api/persons/:id', (request, response) => {
     })
 })
 
+app.put('/api/persons/:id', (request, response) => {
+  const body = request.body
+  const { name, number } = body
+
+  Person.findOneAndUpdate(
+    { name: name },
+    { number: number },
+    { new: true })
+    .then(updatedEntry => {
+      if (updatedEntry) {
+        response.status(200).json(updatedEntry)
+      }
+      else {
+        response.status(400).json({ message: 'no entry found with that name' })
+      }
+    })
+    .catch(error => {
+      res.status(500).json({ message: error.message })
+    })
+});
+
 app.delete('/api/persons/:id', (request, response) => {
   Person.findByIdAndDelete(request.params.id)
     .then(result => {
