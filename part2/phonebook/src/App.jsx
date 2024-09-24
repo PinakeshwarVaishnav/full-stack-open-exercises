@@ -82,7 +82,11 @@ const App = () => {
         setNewName("");
         setNewNumber("");
         setNotificationMessage(`Added ${newName}`);
-      });
+      })
+        .catch(error => {
+          setErrorMessage(error.respone.data.error)
+          console.log(error.response.data.error)
+        })
     }
   };
 
