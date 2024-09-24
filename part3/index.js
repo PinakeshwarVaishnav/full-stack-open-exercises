@@ -55,14 +55,15 @@ app.get('/api/persons/:id', (request, response) => {
     })
 })
 
-app.put('/api/persons/:id', (request, response) => {
+app.put('/api/persons/:id', (request, response, next) => {
   const body = request.body
   const { name, number } = body
 
   Person.findOneAndUpdate(
     { name: name },
     { number: number },
-    { new: true })
+    { new: true },
+    { runValidators: true })
     .then(updatedEntry => {
       if (updatedEntry) {
         response.status(200).json(updatedEntry)
@@ -72,7 +73,7 @@ app.put('/api/persons/:id', (request, response) => {
       }
     })
     .catch(error => {
-      res.status(500).json({ message: error.message })
+      next(error)
     })
 });
 
@@ -89,7 +90,7 @@ const generateId = () => {
   return String(randomId)
 }
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
   const body = request.body
   const { name, number } = body
 
@@ -105,7 +106,7 @@ app.post('/api/persons', (request, response) => {
         response.status(201).json(newPerson)
       })
       .catch(err => {
-        console.error(`error in saving ${newPerson} to the database`, err)
+        next(err)
       })
   }
 })
@@ -122,7 +123,10 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformed id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).send({ error: error.message })
   }
+
   next(error)
 }
 
