@@ -13,26 +13,7 @@ const Person = require('./models/person')
 const { default: mongoose } = require('mongoose')
 
 let persons = [
-  {
-    "id": "1",
-    "name": "Arto Hellas",
-    "number": "040-123456"
-  },
-  {
-    "id": "2",
-    "name": "Ada Lovelace",
-    "number": "39-44-5323523"
-  },
-  {
-    "id": "3",
-    "name": "Dan Abramov",
-    "number": "12-43-234345"
-  },
-  {
-    "id": "4",
-    "name": "Mary Poppendieck",
-    "number": "39-23-6423122"
-  }
+
 ]
 
 const unknownEndpoint = (request, response) => {
@@ -94,9 +75,9 @@ app.post('/api/persons', (request, response, next) => {
   const body = request.body
   const { name, number } = body
 
-  if (typeof name !== 'string' || typeof number !== 'number') {
-    console.log('invalid input: ', body)
-    return response.status(400).json({ error: 'invalid input' })
+  if (typeof name !== 'string' || typeof number !== 'string') {
+    console.log('invalid input type: ', body)
+    return response.status(400).json({ error: 'invalid input type' })
   }
   else {
     const newPerson = new Person(body)
