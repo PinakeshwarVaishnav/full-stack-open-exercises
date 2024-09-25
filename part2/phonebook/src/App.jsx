@@ -21,6 +21,7 @@ const App = () => {
       setPersons(initialUsers);
     });
   }, []);
+  console.log(typeof persons)
   console.log("render", persons.length, "persons");
 
   const handleInputChange = (event) => {
@@ -43,7 +44,7 @@ const App = () => {
         )
       ) {
         axios
-          .put(`http://localhost:3001/persons/${existingUser.id}`, {
+          .put(`https://full-stack-open-exercises-2.onrender.com/api/persons/${existingUser.id}`, {
             ...existingUser,
             number: newNumber,
           })
@@ -74,8 +75,15 @@ const App = () => {
       const newUser = {
         name: newName,
         number: newNumber,
-        id: String(Math.floor(Math.random() * 10000)),
       };
+
+      axios.post('https://full-stack-open-exercises-2.onrender.com/api/persons', newUser)
+        .then(response => {
+          console.log('Phonebook entry created: ', response.data)
+        })
+        .catch(error => {
+          console.error('Error in saving entry: ', error)
+        })
 
       users.create(newUser).then((response) => {
         setPersons(persons.concat(response));
@@ -101,7 +109,7 @@ const App = () => {
   const handleDelete = (id, name) => {
     if (window.confirm(`Delete ${name} ?`)) {
       axios
-        .delete(`http://localhost:3001/persons/${id}`)
+        .delete(`https://full-stack-open-exercises-2.onrender.com/api/persons/${id}`)
         .then(() => {
           console.log("Entry deleted successfully");
           users.getAll().then((initialUsers) => {
