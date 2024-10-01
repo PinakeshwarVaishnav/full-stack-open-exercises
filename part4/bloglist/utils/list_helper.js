@@ -18,9 +18,16 @@ const mostBlogs = (blogs) => {
   return result
 }
 
+const mostLikes = (blogs) => {
+  const topAuthor = _.maxBy(blogs, 'likes')
+  const result = _.pick(topAuthor, ['author', 'likes'])
+  return result
+}
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlogs,
-  mostBlogs
+  mostBlogs,
+  mostLikes
 }
