@@ -81,6 +81,7 @@ describe('total likes', () => {
     ]
 
     const result = totalLikes(blogs)
+    console.log('the result of bigger list is', result)
     assert.strictEqual(result, 36)
 
   })

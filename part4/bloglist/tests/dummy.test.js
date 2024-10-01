@@ -7,5 +7,5 @@ test('dummy returns one', () => {
 
   const result = listHelper.dummy(blogs)
   assert.strictEqual(result, 1)
-  console.log(result)
+  console.log('the result of dummy function is', result)
 })
