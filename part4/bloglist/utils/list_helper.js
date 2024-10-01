@@ -13,7 +13,9 @@ const favoriteBlogs = (blogs) => {
 }
 
 const mostBlogs = (blogs) => {
-  return _.maxBy(blogs, 'blogs')
+  const topAuthor = _.maxBy(blogs, 'blogs')
+  const result = _.pick(topAuthor, ['author', 'blogs'])
+  return result
 }
 
 module.exports = {

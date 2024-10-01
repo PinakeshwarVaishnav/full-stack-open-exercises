@@ -60,12 +60,8 @@ describe('most Blogs', () => {
     const result = mostBlogs(blogs)
     console.log('the result of the mostBlogs function is', result)
     assert.deepEqual(result, {
-      _id: "5a422b3a1b54a676234d17f9",
-      title: "Canonical string reduction",
       author: "Edsger W. Dijkstra",
-      url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
       blogs: 12,
-      __v: 0
     })
   })
 })
