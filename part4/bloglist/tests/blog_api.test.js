@@ -15,14 +15,17 @@ beforeEach(async () => {
 })
 
 test('all blogs are returned as json', async () => {
-  const response = await api.get('/api/blogs').expect(200).expect('Content-Type', /application\/json/)
+  const response = await api
+    .get('/api/blogs')
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
 
   assert.strictEqual(response.body.length, helper.initialBlogs.length)
 })
 
-test('blog posts unique identifier is named id', async () => {
+test('blog posts contain id property', async () => {
   const response = await api.get('/api/blogs')
-  console.log('response body', response.body)
+  console.log('response body for id test', response.body)
 
   assert.ok(response.body[0].id)
 })
@@ -41,8 +44,9 @@ test('a valid blog can be added', async () => {
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
-  const blogsAtEnd = await helper.blogsInDb
-  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
+  const response = await api.get('/api/blogs')
+  console.log('response body for valid blog test', response.body)
+  assert.strictEqual(response.body.length, helper.initialBlogs.length + 1)
 })
 
 after(async () => {
