@@ -66,6 +66,18 @@ test('likes property default value 0 is added in the missing blog', async () => 
   assert.strictEqual(response.body.likes, 0)
 })
 
+test('status code 400 bad request if title or url properties are missing', async () => {
+  const newBlog = {
+    author: 'me',
+  }
+
+  const response = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+  console.log('status code for test of title or url properties missing is', response.statusCode)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
