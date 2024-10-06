@@ -90,6 +90,25 @@ test('status code 400 bad request if title or url properties are missing', async
   console.log('status code for test of title or url properties missing is', response.statusCode)
 })
 
+test('updating information of an individual blog post', async () => {
+  const updatedBlog = {
+    title: "Understanding Asynchronous JavaScript",
+    author: "Jane Doe",
+    url: "https://example.com/understanding-asynchronous-javascript",
+    likes: 50,
+  }
+
+  await api
+    .put('/api/blogs/670280e93e55c934498bed2d')
+    .send(updatedBlog)
+    .expect(200)
+
+  const response = await api.get('/api/blogs')
+
+  const updatedEntry = response.body
+  console.log('updated entry:', updatedEntry)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
