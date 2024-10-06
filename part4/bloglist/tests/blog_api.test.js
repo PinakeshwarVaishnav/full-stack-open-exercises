@@ -1,4 +1,4 @@
-const { test, after, beforeEach } = require('node:test')
+const { test, after, describe, beforeEach } = require('node:test')
 const Blog = require('../models/blog')
 const mongoose = require('mongoose')
 const helper = require('./test_helper')
@@ -25,7 +25,6 @@ test('all blogs are returned as json', async () => {
 
 test('blog posts contain id property', async () => {
   const response = await api.get('/api/blogs')
-  console.log('response body for id test', response.body)
 
   assert.ok(response.body[0].id)
 })
@@ -45,8 +44,22 @@ test('a valid blog can be added', async () => {
     .expect('Content-Type', /application\/json/)
 
   const response = await api.get('/api/blogs')
-  console.log('response body for valid blog test', response.body)
   assert.strictEqual(response.body.length, helper.initialBlogs.length + 1)
+})
+
+describe('deletion of a blog', () => {
+  test('succeeds with status 204 if id is valid', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
+
+    const blogsAtEnd = await helper.blogsInDb()
+
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
+  })
 })
 
 test('likes property default value 0 is added in the missing blog', async () => {
@@ -61,7 +74,6 @@ test('likes property default value 0 is added in the missing blog', async () => 
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
-  console.log('response body for likes test is', response.body)
 
   assert.strictEqual(response.body.likes, 0)
 })
