@@ -156,7 +156,7 @@ describe('when there is initially one user in db', () => {
       .post('/api/users')
       .send(newUser)
       .expect(400)
-      .expect('Content-Type', /application\/json/)
+      .expect('Cotent-Type', /application\/json/)
 
     const usersAtEnd = await helper.usersInDb()
     assert(result.body.error.includes('expected `username` to be unique'))
@@ -166,6 +166,5 @@ describe('when there is initially one user in db', () => {
 })
 
 after(async () => {
-  await User.deleteMany({})
   await mongoose.connection.close()
 })

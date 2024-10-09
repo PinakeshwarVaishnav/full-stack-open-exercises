@@ -5,6 +5,16 @@ const { response, request } = require('express')
 
 usersRouter.post('/', async (request, response) => {
   const { username, password, name } = request.body
+  if (username === undefined) {
+    return response.status(400).json({ error: 'username missing' })
+
+  } else if (password === undefined) {
+    return response.status(400).json({ error: 'password missing' })
+  } else if (username.length < 3) {
+    return response.status(400).json({ error: 'username length must be atleast 3 characters long' })
+  } else if (password.length < 3) {
+    return response.status(400).json({ error: 'password length must be atleast 3 characters long' })
+  }
 
   const saltRounds = 10
   const passwordHash = await bcrypt.hash(password, saltRounds)
