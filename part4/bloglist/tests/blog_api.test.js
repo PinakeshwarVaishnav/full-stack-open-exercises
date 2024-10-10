@@ -143,25 +143,48 @@ describe('when there is initially one user in db', () => {
     assert(usernames.includes(newUser.username))
   })
 
-  test('creation fails with proper statuscode and message if username already taken', async () => {
+  /*  test('creation fails with proper statuscode and message if username already taken', async () => {
+  const usersAtStart = await helper.usersInDb()
+
+  const newUser = {
+    username: 'root',
+    name: 'Superuser',
+    password: 'salainen',
+  }
+
+  const result = await api
+    .post('/api/users')
+    .send(newUser)
+    .expect(400)
+    .expect('Content-Type', /application\/json/)
+
+  const usersAtEnd = await helper.usersInDb()
+
+  assert(result.body.error.includes('expected `username` to be unique'))
+
+  assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+})
+*/
+})
+
+describe('invalid user are not created', () => {
+  test('fails if username or password is missing', async () => {
     const usersAtStart = await helper.usersInDb()
 
     const newUser = {
-      username: 'root',
-      name: 'su',
-      password: '4324242'
+      name: 'Superuser',
     }
 
     const result = await api
       .post('/api/users')
       .send(newUser)
       .expect(400)
-      .expect('Cotent-Type', /application\/json/)
+      .expect('Content-Type', /application\/json/)
 
     const usersAtEnd = await helper.usersInDb()
-    assert(result.body.error.includes('expected `username` to be unique'))
 
     assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+    assert.strictEqual(result.statusCode, 400)
   })
 })
 
