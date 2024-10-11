@@ -2,6 +2,7 @@ const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
+const authenticateToken = require('../utils/middleware').authenticateToken
 
 const getTokenFrom = request => {
   const authorization = request.get('authorization')
@@ -32,7 +33,7 @@ blogsRouter.get('/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-blogsRouter.post('/', async (request, response, next) => {
+blogsRouter.post('/', authenticateToken, async (request, response, next) => {
   const body = request.body
   const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
   if (!decodedToken.id) {

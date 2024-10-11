@@ -1,5 +1,7 @@
 const { request } = require('express')
 const logger = require('./logger')
+const jwt = require('jsonwebtoken')
+const secretKey = process.env.SECRET
 
 const requestLogger = (request, response, next) => {
   logger.info('Method:', request.method)
@@ -28,8 +30,22 @@ const errorHandler = (error, request, response, next) => {
   next(error)
 }
 
+const authenticateToken = (request, response, next) => {
+  const authHeader = request.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1]
+
+  if (!token) return response.status(401).json({ error: 'unauthorized access no token' })
+
+  jwt.verify(token, secretKey, (err, user) => {
+    if (err) return response.sendstatus(403)
+    request.user = user
+    next()
+  })
+}
+
 module.exports = {
   requestLogger,
   unknownEndpoint,
-  errorHandler
+  errorHandler,
+  authenticateToken
 }
