@@ -45,7 +45,7 @@ blogsRouter.post('/', authenticateToken, async (request, response, next) => {
     .catch(error => next(error))
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
+blogsRouter.delete('/:id', authenticateToken, async (request, response) => {
   await Blog.findByIdAndDelete(request.params.id)
   response.status(204).end()
 })
