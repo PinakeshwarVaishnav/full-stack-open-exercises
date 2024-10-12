@@ -1,7 +1,5 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
-const jwt = require('jsonwebtoken')
 const authenticateToken = require('../utils/middleware').authenticateToken
 
 blogsRouter.get('/', (request, response) => {
@@ -50,7 +48,7 @@ blogsRouter.delete('/:id', authenticateToken, async (request, response) => {
   response.status(204).end()
 })
 
-blogsRouter.put('/:id', (request, response, next) => {
+blogsRouter.put('/:id', authenticateToken, (request, response, next) => {
   const body = request.body
 
   const blog = {
