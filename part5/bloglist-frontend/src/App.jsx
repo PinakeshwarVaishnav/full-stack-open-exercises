@@ -40,8 +40,9 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+
     } catch (error) {
-      setErrorMessage('Wrong credentials')
+      setErrorMessage('Wrong username or password')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -67,7 +68,7 @@ const App = () => {
   useEffect(() => {
     const loggedUserJSON =
       window.localStorage.getItem('loggedBlogappUser')
-    if (loggedUserJSON && loggedUserJSON !== '' && loggedUserJSON !== undefined) {
+    if (loggedUserJSON && loggedUserJSON !== '' && loggedUserJSON !== undefined && loggedUserJSON !== null) {
       const user = JSON.parse(loggedUserJSON)
       console.log('Parsed user', user)
       setUser(user)
@@ -86,6 +87,11 @@ const App = () => {
 
     const response = await blogService.create(blogObject)
     setBlogs((prevBlogs) => [...prevBlogs, response])
+    setErrorMessage(`a new blog ${newBlog.title} by ${newBlog.author} added`)
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 5000)
+
     setNewBlog(
       {
         title: "",
