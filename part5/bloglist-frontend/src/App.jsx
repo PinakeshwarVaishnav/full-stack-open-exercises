@@ -6,7 +6,11 @@ import Notification from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [newBlog, setNewBlog] = useState("")
+  const [newBlog, setNewBlog] = useState({
+    title: "",
+    author: "",
+    url: "",
+  })
   const [username, setUsername] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
   const [password, setPassword] = useState('')
@@ -71,6 +75,26 @@ const App = () => {
     }
   }, [])
 
+  const addBlog = async (event) => {
+    event.preventDefault()
+    const blogObject = {
+      title: newBlog.title,
+      author: newBlog.author,
+      url: newBlog.url
+    }
+    console.log('new created blog is', blogObject)
+
+    const response = await blogService.create(blogObject)
+    setBlogs((prevBlogs) => [...prevBlogs, response])
+    setNewBlog(
+      {
+        title: "",
+        author: "",
+        url: "",
+      }
+    )
+  }
+
   if (user === null) {
     return (
       <div>
@@ -100,6 +124,15 @@ const App = () => {
     )
   }
 
+  const handleChange = (event) => {
+    const { name, value } = event.target
+    setNewBlog({
+      ...newBlog,
+      [name]: value
+    })
+    console.log('new blog being created is', newBlog)
+  }
+
   return (
     <div>
       <h2>blogs</h2>
@@ -111,10 +144,43 @@ const App = () => {
             <button onClick={handleLogout}>
               Logout
             </button>
+            <div>
+              <h2>create new</h2>
+              <form onSubmit={addBlog}>
+                <div>
+                  title:
+                  <input
+                    type='text'
+                    value={newBlog.title}
+                    name='title'
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  author:
+                  <input
+                    type='text'
+                    value={newBlog.author}
+                    name='author'
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  url:
+                  <input
+                    type='text'
+                    value={newBlog.url}
+                    name='url'
+                    onChange={handleChange}
+                  />
+                </div>
+                <button type='submit'>create</button>
+              </form>
+            </div>
           </div>
         )
       }
-
+      <br />
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
