@@ -1,8 +1,15 @@
 const Notification = ({ message }) => {
-  if (message === null) {
+  console.log('Notification message:', message)
+  if (!message) {
     return null
   }
-  return <div className="error"> {message}</div>
+
+  if (message.includes('invalid')) {
+    console.log('message includes invalid')
+    return <div className="error"> {message}</div>
+  }
+
+  return <div className="blog">{message}</div>
 }
 
 export default Notification

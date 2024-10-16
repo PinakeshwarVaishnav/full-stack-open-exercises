@@ -12,7 +12,7 @@ const App = () => {
     url: "",
   })
   const [username, setUsername] = useState('')
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [message, setMessage] = useState(null)
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
@@ -42,10 +42,10 @@ const App = () => {
       setPassword('')
 
     } catch (error) {
-      setErrorMessage('Wrong username or password')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      const errorMessage = error.response ? error.response.data.error : "Wrong username or password"
+      console.log('Login Error:', error)
+      setMessage(errorMessage)
+      console.log('message is set to', message)
     }
   }
 
@@ -64,6 +64,22 @@ const App = () => {
     }
     fetchBlogs()
   }, [])
+
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessage(null)
+      }, 5000)
+
+      return () => {
+        clearTimeout(timer)
+      }
+    }
+  }, [message])
+
+  useEffect(() => {
+    console.log('message state is', message)
+  }, [message])
 
   useEffect(() => {
     const loggedUserJSON =
@@ -87,10 +103,8 @@ const App = () => {
 
     const response = await blogService.create(blogObject)
     setBlogs((prevBlogs) => [...prevBlogs, response])
-    setErrorMessage(`a new blog ${newBlog.title} by ${newBlog.author} added`)
-    setTimeout(() => {
-      setErrorMessage(null)
-    }, 5000)
+    setMessage(`a new blog ${newBlog.title} by ${newBlog.author} added`)
+
 
     setNewBlog(
       {
@@ -104,6 +118,7 @@ const App = () => {
   if (user === null) {
     return (
       <div>
+        <Notification message={message} />
         <h2>Log in to application</h2>
         <form onSubmit={handleLogin}>
           <div>
@@ -141,8 +156,8 @@ const App = () => {
 
   return (
     <div>
-      <h2>blogs</h2>
-      <Notification message={errorMessage} />
+      <h1>blogs</h1>
+      <Notification message={message} />
       {user !== null &&
         (
           <div>
