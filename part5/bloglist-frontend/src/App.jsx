@@ -3,6 +3,7 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -175,40 +176,7 @@ const App = () => {
             </div>
             <div>
               {isVisible && (
-                <div>
-                  <h2>create new</h2>
-                  <form onSubmit={addBlog}>
-                    <div>
-                      title:
-                      <input
-                        type='text'
-                        value={newBlog.title}
-                        name='title'
-                        onChange={handleChange}
-                      />
-                    </div>
-                    <div>
-                      author:
-                      <input
-                        type='text'
-                        value={newBlog.author}
-                        name='author'
-                        onChange={handleChange}
-                      />
-                    </div>
-                    <div>
-                      url:
-                      <input
-                        type='text'
-                        value={newBlog.url}
-                        name='url'
-                        onChange={handleChange}
-                      />
-                    </div>
-                    <button type='submit'>create</button>
-                  </form>
-
-                </div>
+                <BlogForm addBlog={addBlog} newBlog={newBlog} handleChange={handleChange} />
               )}
               <button onClick={toggleForm}>
                 {isVisible ? 'Cancel' : 'new blog'}
