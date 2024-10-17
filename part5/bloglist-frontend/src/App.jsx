@@ -15,6 +15,11 @@ const App = () => {
   const [message, setMessage] = useState(null)
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [isVisible, setIsVisible] = useState(false)
+
+  const toggleForm = () => {
+    setIsVisible(!isVisible)
+  }
 
   const handleLogout = () => {
     localStorage.removeItem('loggedBlogappUser')
@@ -113,6 +118,7 @@ const App = () => {
         url: "",
       }
     )
+    setIsVisible(false)
   }
 
   if (user === null) {
@@ -161,51 +167,64 @@ const App = () => {
       {user !== null &&
         (
           <div>
-            <p>{user.name} logged in </p>
-            <button onClick={handleLogout}>
-              Logout
-            </button>
+            <div className='container'>
+              <p>{user.name} logged in </p>
+              <button className='button' onClick={handleLogout}>
+                Logout
+              </button>
+            </div>
             <div>
-              <h2>create new</h2>
-              <form onSubmit={addBlog}>
+              {isVisible && (
                 <div>
-                  title:
-                  <input
-                    type='text'
-                    value={newBlog.title}
-                    name='title'
-                    onChange={handleChange}
-                  />
+                  <h2>create new</h2>
+                  <form onSubmit={addBlog}>
+                    <div>
+                      title:
+                      <input
+                        type='text'
+                        value={newBlog.title}
+                        name='title'
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div>
+                      author:
+                      <input
+                        type='text'
+                        value={newBlog.author}
+                        name='author'
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div>
+                      url:
+                      <input
+                        type='text'
+                        value={newBlog.url}
+                        name='url'
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <button type='submit'>create</button>
+                  </form>
+
                 </div>
-                <div>
-                  author:
-                  <input
-                    type='text'
-                    value={newBlog.author}
-                    name='author'
-                    onChange={handleChange}
-                  />
-                </div>
-                <div>
-                  url:
-                  <input
-                    type='text'
-                    value={newBlog.url}
-                    name='url'
-                    onChange={handleChange}
-                  />
-                </div>
-                <button type='submit'>create</button>
-              </form>
+              )}
+              <button onClick={toggleForm}>
+                {isVisible ? 'Cancel' : 'new blog'}
+              </button>
+
             </div>
           </div>
         )
       }
       <br />
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
-    </div>
+      {
+        blogs.map(blog =>
+          <Blog key={blog.id} blog={blog} />
+        )
+      }
+    </div >
   )
 }
 
