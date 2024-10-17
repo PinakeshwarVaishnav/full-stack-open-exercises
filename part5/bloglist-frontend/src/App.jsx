@@ -179,7 +179,7 @@ const App = () => {
                 <BlogForm addBlog={addBlog} newBlog={newBlog} handleChange={handleChange} />
               )}
               <button onClick={toggleForm}>
-                {isVisible ? 'Cancel' : 'new blog'}
+                {isVisible ? 'Cancel' : ' create new blog'}
               </button>
 
             </div>
