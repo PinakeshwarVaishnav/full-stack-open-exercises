@@ -17,9 +17,14 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [isVisible, setIsVisible] = useState(false)
+  const [updatedBlogId, setUpdatedBlogId] = useState(null)
 
   const toggleForm = () => {
     setIsVisible(!isVisible)
+  }
+
+  const handleUpdatedBlog = (updatedBlogIdData) => {
+    setUpdatedBlogId(updatedBlogIdData)
   }
 
   const handleLogout = () => {
@@ -55,21 +60,22 @@ const App = () => {
     }
   }
 
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        const blogs = await blogService.getAll()
-        if (blogs) {
-          setBlogs(blogs)
-        } else {
-          console.log('No blogs found')
-        }
-      } catch (error) {
-        console.error('Error fetching blogs'.error)
+  const fetchBlogs = async () => {
+    try {
+      const blogs = await blogService.getAll()
+      if (blogs) {
+        setBlogs(blogs)
+      } else {
+        console.log('No blogs found')
       }
+    } catch (error) {
+      console.error('Error fetching blogs'.error)
     }
+  }
+  useEffect(() => {
     fetchBlogs()
-  }, [])
+    console.log('updated blog id is', updatedBlogId)
+  }, [updatedBlogId])
 
   useEffect(() => {
     if (message) {
@@ -97,6 +103,18 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
+
+  useEffect(() => {
+    if (updatedBlogId) {
+      const timer = setTimeout(() => {
+        setUpdatedBlogId(null)
+      }, 1)
+
+      return () => {
+        clearTimeout(timer)
+      }
+    }
+  }, [updatedBlogId])
 
   const addBlog = async (event) => {
     event.preventDefault()
@@ -189,7 +207,7 @@ const App = () => {
       <br />
       {
         blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} onBlogDataChange={handleUpdatedBlog} />
         )
       }
     </div >

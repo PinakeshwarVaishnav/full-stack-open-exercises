@@ -7,9 +7,9 @@ const setToken = newToken => {
   token = `Bearer ${newToken}`
 }
 
-const getAll = () => {
-  const request = axios.get(baseUrl)
-  return request.then(response => response.data)
+const getAll = async () => {
+  const response = await axios.get(baseUrl)
+  return response.data
 }
 
 const create = async newObject => {
@@ -21,4 +21,25 @@ const create = async newObject => {
   return response.data
 }
 
-export default { getAll, setToken, create }
+const updateBlog = async updatedObject => {
+  if (!updatedObject.id) {
+    console.error('blog id is undefined or null')
+  }
+
+  console.log('updatedBlog id is', updatedObject.id)
+
+  const config = {
+    headers: { Authorization: token }
+  }
+
+  const response = await axios.put(`/api/blogs/${updatedObject.id}`, updatedObject, config)
+  console.log('updating blog', response.data)
+  return response.data
+}
+
+const getBlogWithId = async (blogId) => {
+  const response = await axios.get(`/api/blogs/${blogId}`)
+  return response.data
+}
+
+export default { getAll, setToken, create, updateBlog, getBlogWithId }
