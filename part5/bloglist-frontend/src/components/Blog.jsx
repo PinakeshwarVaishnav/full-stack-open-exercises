@@ -21,7 +21,17 @@ const Blog = ({ blog, onBlogDataChange }) => {
 
     onBlogDataChange(updatedBlog.id)
     const response = await blogService.updateBlog(updatedBlog)
-    console.log('updated blog is', response.data)
+    console.log('updated blog is', response)
+  }
+
+  const handleBlogRemoval = async (event) => {
+    event.preventDefault()
+    const confirmed = window.confirm(`Remove blog ${blog.title} by ${blog.author}`)
+    if (confirmed) {
+      console.log('blog to be removed is', blog)
+      const response = await blogService.deleteBlog(blog.id)
+      console.log('blog removal status', response.status)
+    }
   }
 
   return (
@@ -38,7 +48,12 @@ const Blog = ({ blog, onBlogDataChange }) => {
           <br />
           {blog.url}
           <br />
-          {blog.user}
+          {blog.user && (
+            <div>
+              {blog.user.username}
+            </div>
+          )}
+          <button onClick={handleBlogRemoval}>remove</button>
         </div>
       )}
 

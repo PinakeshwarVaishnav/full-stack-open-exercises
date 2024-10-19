@@ -69,7 +69,6 @@ const App = () => {
     }
   }
 
-  console.log('user is', user)
   const fetchBlogs = async () => {
     try {
       const blogs = await blogService.getAll()
@@ -118,7 +117,7 @@ const App = () => {
     if (updatedBlogId) {
       const timer = setTimeout(() => {
         setUpdatedBlogId(null)
-      }, 1)
+      }, 1000)
 
       return () => {
         clearTimeout(timer)

@@ -32,9 +32,13 @@ const updateBlog = async updatedObject => {
     headers: { Authorization: token }
   }
 
-  const response = await axios.put(`/api/blogs/${updatedObject.id}`, updatedObject, config)
-  console.log('updating blog', response.data)
-  return response.data
+  try {
+    const response = await axios.put(`/api/blogs/${updatedObject.id}`, updatedObject, config)
+    console.log('updating blog', response.data)
+    return response.data
+  } catch (error) {
+    console.error('error while updating blogs', error.response.data)
+  }
 }
 
 const getBlogWithId = async (blogId) => {
@@ -42,4 +46,16 @@ const getBlogWithId = async (blogId) => {
   return response.data
 }
 
-export default { getAll, setToken, create, updateBlog, getBlogWithId }
+const deleteBlog = async (blogId) => {
+  const config = {
+    headers: { Authorization: token }
+  }
+  try {
+    const response = await axios.delete(`api/blogs/${blogId}`, config)
+    return response
+  } catch (error) {
+    console.error('error while deleting blog', error)
+  }
+}
+
+export default { getAll, setToken, create, updateBlog, getBlogWithId, deleteBlog }
