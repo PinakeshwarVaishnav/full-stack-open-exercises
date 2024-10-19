@@ -57,7 +57,6 @@ blogsRouter.put('/:id', authenticateToken, (request, response, next) => {
     author: body.author,
     url: body.url,
     likes: body.likes,
-    user: request.user
   }
 
   Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
