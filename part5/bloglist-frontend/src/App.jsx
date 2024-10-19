@@ -18,10 +18,19 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [isVisible, setIsVisible] = useState(false)
   const [updatedBlogId, setUpdatedBlogId] = useState(null)
+  const [sortOrder, setSortOrder] = useState('asc')
+
+  const sortBlogsByLikes = (order) => {
+    const sortedBlogs = [...blogs].sort((a, b) => {
+      return order === 'asc' ? a.likes - b.likes : b.likes - a.likes
+    })
+    setBlogs(sortedBlogs)
+  }
 
   const toggleForm = () => {
     setIsVisible(!isVisible)
   }
+
 
   const handleUpdatedBlog = (updatedBlogIdData) => {
     setUpdatedBlogId(updatedBlogIdData)
@@ -60,6 +69,7 @@ const App = () => {
     }
   }
 
+  console.log('user is', user)
   const fetchBlogs = async () => {
     try {
       const blogs = await blogService.getAll()
@@ -121,7 +131,8 @@ const App = () => {
     const blogObject = {
       title: newBlog.title,
       author: newBlog.author,
-      url: newBlog.url
+      url: newBlog.url,
+      user: user
     }
     console.log('new created blog is', blogObject)
 
@@ -199,7 +210,10 @@ const App = () => {
               <button onClick={toggleForm}>
                 {isVisible ? 'Cancel' : ' create new blog'}
               </button>
-
+              <div>
+                <button onClick={() => { setSortOrder('asc'); sortBlogsByLikes('asc') }}>Sort by lowest likes</button>
+                <button onClick={() => { setSortOrder('dsc'); sortBlogsByLikes('dsc') }}>Sort by highest likes</button>
+              </div>
             </div>
           </div>
         )

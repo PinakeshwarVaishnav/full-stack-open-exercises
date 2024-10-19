@@ -37,6 +37,8 @@ const Blog = ({ blog, onBlogDataChange }) => {
           <button onClick={handleLikeChange}> like </button>
           <br />
           {blog.url}
+          <br />
+          {blog.user}
         </div>
       )}
 
