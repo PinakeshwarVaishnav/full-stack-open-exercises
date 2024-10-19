@@ -25,9 +25,10 @@ blogsRouter.get('/:id', (request, response, next) => {
 
 blogsRouter.post('/', authenticateToken, async (request, response, next) => {
   const body = request.body
+  console.log('user details of the new created blog is', request.user)
   const blog = new Blog({
     ...body,
-    user: request.user._id
+    user: request.user
   })
 
   try {
@@ -55,7 +56,8 @@ blogsRouter.put('/:id', authenticateToken, (request, response, next) => {
     title: body.title,
     author: body.author,
     url: body.url,
-    likes: body.likes
+    likes: body.likes,
+    user: request.user
   }
 
   Blog.findByIdAndUpdate(request.params.id, blog, { new: true })

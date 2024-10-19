@@ -39,6 +39,7 @@ const authenticateToken = (request, response, next) => {
   jwt.verify(token, secretKey, (err, user) => {
     if (err) return response.status(403).json({ error: "invalid token" })
     request.user = user
+    console.log('Authenticated user:', request.user)
     next()
   })
 }
