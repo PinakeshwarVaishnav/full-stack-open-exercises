@@ -131,7 +131,6 @@ const App = () => {
       title: newBlog.title,
       author: newBlog.author,
       url: newBlog.url,
-      user: user
     }
     console.log('new created blog is', blogObject)
 
@@ -220,7 +219,7 @@ const App = () => {
       <br />
       {
         blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} onBlogDataChange={handleUpdatedBlog} />
+          <Blog key={blog.id} blog={blog} onBlogDataChange={handleUpdatedBlog} user={user.username} />
         )
       }
     </div >

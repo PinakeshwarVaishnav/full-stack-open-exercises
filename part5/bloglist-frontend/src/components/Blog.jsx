@@ -1,7 +1,7 @@
 import { useState } from "react"
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, onBlogDataChange }) => {
+const Blog = ({ blog, onBlogDataChange, user }) => {
   const [isVisible, setIsVisible] = useState(false)
 
   const toggleBlogDetails = () => {
@@ -53,7 +53,11 @@ const Blog = ({ blog, onBlogDataChange }) => {
               {blog.user.username}
             </div>
           )}
-          <button onClick={handleBlogRemoval}>remove</button>
+          {blog.user && blog.user.username === user && (
+            <div>
+              <button onClick={handleBlogRemoval}>remove</button>
+            </div>
+          )}
         </div>
       )}
 
