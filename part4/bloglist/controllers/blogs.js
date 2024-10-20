@@ -28,7 +28,7 @@ blogsRouter.post('/', authenticateToken, async (request, response, next) => {
   console.log('user details of the new created blog is', request.user)
   const blog = new Blog({
     ...body,
-    user: request.user
+    user: request.user.id
   })
 
   try {
