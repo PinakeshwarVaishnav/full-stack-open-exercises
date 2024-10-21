@@ -1,27 +1,17 @@
 import { useState } from "react"
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, onBlogDataChange, user }) => {
+const Blog = ({ blog, user, handleLikeChange }) => {
   const [isVisible, setIsVisible] = useState(false)
 
   const toggleBlogDetails = () => {
     setIsVisible(!isVisible)
   }
 
-  const handleLikeChange = async (event) => {
-    event.preventDefault()
-    console.log('blog id is', blog.id)
-    const updatedBlog = {
-      likes: blog.likes + 1,
-      author: blog.author,
-      title: blog.title,
-      url: blog.url,
-      id: blog.id
+  const handleLike = (event) => {
+    if (handleLikeChange) {
+      handleLikeChange(blog)
     }
-
-    onBlogDataChange(updatedBlog.id)
-    const response = await blogService.updateBlog(updatedBlog)
-    console.log('updated blog is', response)
   }
 
   const handleBlogRemoval = async (event) => {
@@ -45,7 +35,7 @@ const Blog = ({ blog, onBlogDataChange, user }) => {
       {isVisible && (
         <div>
           <p className="blog-likes">{blog.likes}</p>
-          <button onClick={handleLikeChange}> like </button>
+          <button onClick={handleLike}> like </button>
           <br />
           <p className="blog-url">{blog.url}</p>
           <br />

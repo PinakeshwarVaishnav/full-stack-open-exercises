@@ -187,7 +187,21 @@ const App = () => {
     })
     console.log('new blog being created is', newBlog)
   }
+  const handleLikeChange = async (blog) => {
+    event.preventDefault()
+    console.log('blog id is', blog.id)
+    const updatedBlog = {
+      likes: blog.likes + 1,
+      author: blog.author,
+      title: blog.title,
+      url: blog.url,
+      id: blog.id
+    }
 
+    handleUpdatedBlog(updatedBlog.id)
+    const response = await blogService.updateBlog(updatedBlog)
+    console.log('updated blog is', response)
+  }
   return (
     <div>
       <h1>blogs</h1>
@@ -219,7 +233,7 @@ const App = () => {
       <br />
       {
         blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} onBlogDataChange={handleUpdatedBlog} user={user.username} />
+          <Blog key={blog.id} blog={blog} user={user.username} handleLikeChange={handleLikeChange} />
         )
       }
     </div >
