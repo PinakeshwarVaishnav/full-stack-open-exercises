@@ -35,22 +35,23 @@ const Blog = ({ blog, onBlogDataChange, user }) => {
   }
 
   return (
-    < div >
+    < div className="blogs">
 
-      {blog.title} {blog.author}
+      <h3 className="blog-title">{blog.title}</h3>
+      <p className="blog-author">{blog.author} </p>
 
       <button onClick={toggleBlogDetails} className="button">{isVisible ? 'hide' : 'view'} </button>
 
       {isVisible && (
         <div>
-          {blog.likes}
+          <p className="blog-likes">{blog.likes}</p>
           <button onClick={handleLikeChange}> like </button>
           <br />
-          {blog.url}
+          <p className="blog-url">{blog.url}</p>
           <br />
           {blog.user && (
             <div>
-              {blog.user.username}
+              <p className="blog-username">{blog.user.username}</p>
             </div>
           )}
           {blog.user && blog.user.username === user && (
