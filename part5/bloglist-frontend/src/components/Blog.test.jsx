@@ -39,3 +39,25 @@ test('renders blog url and likes when the button view is clicked', () => {
   expect(screen.queryByText('432')).toBeInTheDocument()
 
 })
+
+test('calls handleLikeChange twice when the like button is clicked twice', () => {
+  const handleLikeChangeMock = vi.fn()
+
+  const blog = {
+    title: 'testing',
+    author: 'developer',
+    url: 'localhost',
+    likes: 432,
+  }
+
+  render(<Blog blog={blog} handleLikeChange={handleLikeChangeMock} />)
+
+  const button = screen.getByRole('button', { name: 'view' })
+  fireEvent.click(button)
+
+  const likeButton = screen.getByRole('button', { name: 'like' })
+  fireEvent.click(likeButton)
+  fireEvent.click(likeButton)
+
+  expect(handleLikeChangeMock).toHaveBeenCalledTimes(2)
+})
