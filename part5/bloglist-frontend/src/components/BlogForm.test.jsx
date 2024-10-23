@@ -4,18 +4,31 @@ import { render, screen, fireEvent } from '@testing-library/react'
 
 test('calls addBlog with the right details when a new blog is created', () => {
   const addBlogMock = vi.fn()
+  let newBlogMock = {
+    title: "",
+    author: "",
+    url: ""
+  }
+  const handleChange = (event) => {
+    event.preventDefault()
+    const { name, value } = event.target
+    newBlogMock = {
+      ...newBlogMock,
+      [name]: value
+    }
+    console.log('new blog being created is', newBlogMock)
+  }
 
-  render(<BlogForm addBlog={addBlogMock} />)
+  render(<BlogForm addBlog={addBlogMock} newBlog={newBlogMock} handleChange={handleChange} />)
 
-  fireEvent.click(screen.getByRole('button', { name: ' create new blog' }))
 
-  fireEvent.change(screen.getByPlaceholderText('title'), {
+  fireEvent.change(screen.getByRole('textbox', { name: 'title:' }), {
     target: { value: 'test' }
   })
-  fireEvent.change(screen.getByPlaceholderText('author'), {
+  fireEvent.change(screen.getByRole('textbox', { name: 'author:' }), {
     target: { value: 'test' }
   })
-  fireEvent.change(screen.getByPlaceholderText('url'), {
+  fireEvent.change(screen.getByRole('textbox', { name: 'url:' }), {
     target: { value: 'test' }
   })
 
