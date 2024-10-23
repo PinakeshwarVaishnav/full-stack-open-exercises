@@ -4,7 +4,9 @@ const BlogForm = ({ addBlog, newBlog, handleChange, }) => {
   return (
     <div>
       <h2>create new</h2>
-      <form onSubmit={addBlog}>
+      <form
+        id="login-form"
+        onSubmit={addBlog}>
         <div>
           <label htmlFor="title">title:</label>
           <input
