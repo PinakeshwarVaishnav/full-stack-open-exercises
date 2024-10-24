@@ -30,7 +30,7 @@ const Blog = ({ blog, user, handleLikeChange }) => {
       <h3 className="blog-title">{blog.title}</h3>
       <p className="blog-author">{blog.author} </p>
 
-      <button onClick={toggleBlogDetails} className="button">{isVisible ? 'hide' : 'view'} </button>
+      <button onClick={toggleBlogDetails} className="view-button">{isVisible ? 'hide' : 'view'} </button>
 
       {isVisible && (
         <div>
