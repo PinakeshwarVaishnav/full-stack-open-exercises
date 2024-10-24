@@ -35,7 +35,7 @@ const Blog = ({ blog, user, handleLikeChange }) => {
       {isVisible && (
         <div>
           <p className="blog-likes">{blog.likes}</p>
-          <button onClick={handleLike}> like </button>
+          <button className="blog-likes" onClick={handleLike}> like </button>
           <br />
           <p className="blog-url">{blog.url}</p>
           <br />
