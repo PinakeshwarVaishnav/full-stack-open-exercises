@@ -83,5 +83,30 @@ describe('Blog app', () => {
       await deleteButton.click()
       await expect(page.locator(`h3.blog-title:has-text("${blogText}")`)).not.toBeVisible()
     })
+    test('dummy text to create a entry for checking if the other user cannot see the remove button', async () => {
+
+    })
   })
+})
+
+test('only the user who added the blog sees the blog delete button', async ({ page, request }) => {
+  await page.goto('http://localhost:5173')
+  await request.post('/api/users', {
+    data: {
+      name: 'pgn',
+      username: 'pgn',
+      password: '123'
+    }
+  })
+  await loginWith(page, 'pgn', '123')
+  await expect(page.getByText('pgn logged in')).toBeVisible()
+
+  const blogText = 'Test title'
+  const viewButton = await page.locator(`h3.blog-title:has-text("${blogText}") >> .. >> button.view-button`)
+  await viewButton.click()
+  const htmlContent = await page.content()
+  console.log(htmlContent)
+
+  const deleteButton = await page.getByRole('button', { name: 'remove' })
+  await expect(deleteButton).not.toBeVisible()
 })
