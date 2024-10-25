@@ -223,7 +223,7 @@ const App = () => {
           <div>
             <div className='container'>
               <p>{user.name} logged in </p>
-              <button className='button' onClick={handleLogout}>
+              <button className='logout-button' onClick={handleLogout}>
                 Logout
               </button>
             </div>
