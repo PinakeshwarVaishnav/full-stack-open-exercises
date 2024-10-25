@@ -1,5 +1,5 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
-const { loginWith } = require('./helper')
+const { loginWith, createBlog } = require('./helper')
 const { request } = require('http')
 
 describe('Blog app', () => {
@@ -41,44 +41,47 @@ describe('Blog app', () => {
   describe('When logged in', () => {
     beforeEach(async ({ page }) => {
       await loginWith(page, 'PGN', '123')
+      await createBlog(page)
     })
 
     test('a new blog can be created', async ({ page }) => {
-
-      await page.getByRole('button', { name: 'create new blog' }).click()
-
-      await page.fill('input[id="title"]', 'Test title')
-      await page.fill('input[id="author"]', 'Test author')
-      await page.fill('input[id="url"]', 'Test url')
-
-      await page.click('button[type="submit"]')
-
       await expect(page.getByText('a new blog Test title by Test author added')).toBeVisible()
     })
 
     test('blog can be liked', async ({ page }) => {
-      await page.getByRole('button', { name: 'create new blog' }).click()
-      await page.fill('input[id="title"]', 'Test title')
-      await page.fill('input[id="author"]', 'Test author')
-      await page.fill('input[id="url"]', 'Test url')
-      await page.click('button[type="submit"]')
-
       const blogText = 'Test title'
 
-      const viewButton = page.locator(`h3.blog-title:has-text("${blogText}") >> .. >> button.view-button`)
+      const viewButton = await page.locator(`h3.blog-title:has-text("${blogText}") >> .. >> button.view-button`)
       await viewButton.click()
 
-      const likeButton = page.locator(`h3.blog-title:has-text("${blogText}") >> .. >> button.like-button`)
+      const likeButton = await page.locator(`h3.blog-title:has-text("${blogText}") >> .. >> button.like-button`)
       await expect(likeButton).toBeVisible()
       await expect(likeButton).toBeEnabled()
-      await page.waitForLoadState('networkidle')
       await likeButton.click()
 
+      const htmlContent = await page.content()
+      console.log(htmlContent)
       const likedStatus = await page.locator(`h3.blog-title:has-text("${blogText}") >> .. >> p.blog-likes`)
       await expect(likedStatus).toHaveText('1')
+      await expect(likedStatus).toHaveText('1')
+    })
+
+    test('blog can be deleted', async ({ page }) => {
+      const blogText = 'Test title'
+
+      const viewButton = await page.locator(`h3.blog-title:has-text("${blogText}") >> .. >> button.view-button`)
+      await viewButton.click()
       const htmlContent = await page.content()
       console.log(htmlContent)
 
+      const deleteButton = await page.getByRole('button', { name: 'remove' })
+
+      page.on('dialog', async dialog => {
+        console.log(dialog.message())
+        await dialog.accept()
+      })
+      await deleteButton.click()
+      await expect(page.locator(`h3.blog-title:has-text("${blogText}")`)).not.toBeVisible()
     })
   })
 })
