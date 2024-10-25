@@ -1,7 +1,7 @@
 import { useState } from "react"
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, user, handleLikeChange }) => {
+const Blog = ({ blog, user, handleLikeChange, handleRemovedBlog }) => {
   console.log('rendered blogs', blog)
   const [isVisible, setIsVisible] = useState(false)
 
@@ -22,6 +22,7 @@ const Blog = ({ blog, user, handleLikeChange }) => {
       console.log('blog to be removed is', blog)
       const response = await blogService.deleteBlog(blog.id)
       console.log('blog removal status', response.status)
+      handleRemovedBlog(blog.id)
     }
   }
 

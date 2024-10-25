@@ -28,6 +28,10 @@ const App = () => {
     setBlogs(sortedBlogs)
   }
 
+  const handleRemovedBlog = (blogId) => {
+    setBlogs((prevBlogs) => prevBlogs.filter(blog => blog.id !== blogId))
+  }
+
   const toggleForm = () => {
     setIsVisible(!isVisible)
   }
@@ -241,7 +245,7 @@ const App = () => {
       <br />
       {
         blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} user={user.username} handleLikeChange={handleLikeChange} />
+          <Blog key={blog.id} blog={blog} user={user.username} handleLikeChange={handleLikeChange} handleRemovedBlog={handleRemovedBlog} />
         )
       }
     </div >
