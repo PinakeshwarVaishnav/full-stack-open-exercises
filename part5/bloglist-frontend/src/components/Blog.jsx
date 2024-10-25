@@ -2,6 +2,7 @@ import { useState } from "react"
 import blogService from '../services/blogs'
 
 const Blog = ({ blog, user, handleLikeChange }) => {
+  console.log('rendered blogs', blog)
   const [isVisible, setIsVisible] = useState(false)
 
   const toggleBlogDetails = () => {

@@ -4,6 +4,7 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
+import axios from 'axios'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -135,7 +136,12 @@ const App = () => {
     console.log('new created blog is', blogObject)
 
     const response = await blogService.create(blogObject)
-    setBlogs((prevBlogs) => [...prevBlogs, response])
+    const userId = response.user
+
+    const userResponse = await axios.get(`/api/users/${userId}`)
+    const userDetails = await userResponse.data
+
+    setBlogs((prevBlogs) => [...prevBlogs, { ...response, user: userDetails }])
     setMessage(`a new blog ${newBlog.title} by ${newBlog.author} added`)
 
 
