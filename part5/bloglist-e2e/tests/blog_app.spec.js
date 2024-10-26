@@ -1,5 +1,5 @@
 const { test, expect, beforeEach, describe } = require('@playwright/test')
-const { loginWith, createBlog } = require('./helper')
+const { loginWith, createBlog, createMultipleBlogs } = require('./helper')
 const { request } = require('http')
 
 describe('Blog app', () => {
@@ -83,6 +83,24 @@ describe('Blog app', () => {
       await deleteButton.click()
       await expect(page.locator(`h3.blog-title:has-text("${blogText}")`)).not.toBeVisible()
     })
+    test('blogs should be sorted by likes in descending order', async ({ page, request }) => {
+
+
+      const token = await page.evaluate(() => localStorage.getItem('token'))
+
+      console.log('user token for creating new blogs', token)
+
+      const config = {
+        headers: { Authorization: token }
+      }
+      await createMultipleBlogs(page, { title: 'Entry 1', author: 'Author 1', url: 'http://example.com/1', likes: 5 }, config, request)
+      await createMultipleBlogs(page, { title: 'Entry 2', author: 'Author 2', url: 'http://example.com/2', likes: 15 }, config, request)
+      await createMultipleBlogs(page, { title: 'Entry 3', author: 'Author 3', url: 'http://example.com/3', likes: 10 }, config, request)
+
+      const htmlContent = await page.content()
+      console.log('html for multiple users is', htmlContent)
+    })
+
     test('dummy text to create a entry for checking if the other user cannot see the remove button', async () => {
 
     })
@@ -110,3 +128,6 @@ test('only the user who added the blog sees the blog delete button', async ({ pa
   const deleteButton = await page.getByRole('button', { name: 'remove' })
   await expect(deleteButton).not.toBeVisible()
 })
+
+
+

@@ -1,3 +1,5 @@
+import { request } from "http"
+
 const loginWith = async (page, username, password) => {
   await page.getByTestId('username').fill(username)
   await page.getByTestId('password').fill(password)
@@ -15,4 +17,11 @@ const createBlog = async (page) => {
   await page.click('button[type="submit"]')
 }
 
-export { loginWith, createBlog }
+const createMultipleBlogs = async (page, blog, config, request) => {
+
+
+  const response = await request.post('/api/blogs', blog, config)
+  return response.data
+}
+
+export { loginWith, createBlog, createMultipleBlogs }
