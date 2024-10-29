@@ -5,8 +5,8 @@ const AnecdoteList = () => {
     console.log('state is', state)
     console.log('searchTerm state is', state.filter)
     return state.filter.searchTerm === ''
-      ? state.reducer
-      : state.reducer.filter(anecdote => anecdote.content.toLowerCase().includes(state.filter.toLowerCase()))
+      ? state.anecdote
+      : state.anecdote.filter(anecdote => anecdote.content.toLowerCase().includes(state.filter.searchTerm.toLowerCase()))
   })
   console.log('anecdotes state is', anecdotes)
   const dispatch = useDispatch()
