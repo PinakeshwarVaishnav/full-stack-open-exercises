@@ -1,22 +1,23 @@
-import { useDispatch, useSelector } from 'react-redux'
-import { setNotification } from '../reducers/notificationReducer'
+import { useSelector } from 'react-redux'
 
 const Notification = () => {
-  const dispatch = useDispatch()
 
-  const notification = useSelector(state => state.notification.content)
+  const notification = useSelector(state => state.notification.message)
 
-  const handleChange = (event) => {
-    dispatch(setNotification('New message from Redux!'))
-  }
+
   const style = {
     border: 'solid',
     padding: 10,
     borderWidth: 1
   }
   return (
-    <div style={style}>
-      {notification}
+    <div>
+      {notification && (
+        <div style={style}>
+          {notification}
+        </div>
+
+      )}
     </div>
   )
 }
