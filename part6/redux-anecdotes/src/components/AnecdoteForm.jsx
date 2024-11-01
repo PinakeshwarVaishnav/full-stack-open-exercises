@@ -10,7 +10,7 @@ const AnecdoteForm = () => {
     const anecdote = event.target.anecdote.value
     event.target.anecdote.value = ''
     dispatch(createAnecdote(anecdote))
-    dispatch(notifyWithTimeout(`added '${anecdote}'`))
+    dispatch(notifyWithTimeout(`added '${anecdote}'`, 10))
     console.log('newAnecdote sent to backend json server is', anecdote)
   }
 
