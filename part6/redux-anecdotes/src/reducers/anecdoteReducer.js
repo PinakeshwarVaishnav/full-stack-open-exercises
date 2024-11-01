@@ -50,4 +50,15 @@ export const createAnecdote = (content) => {
   }
 }
 
+export const voteAnecdote = (id) => {
+  return async (dispatch) => {
+    try {
+      await anecdoteService.voteAnecdote(id)
+      await dispatch(vote(id))
+    } catch (error) {
+      console.error('failed to vote', error)
+    }
+  }
+}
+
 export default anecdoteSlice.reducer
