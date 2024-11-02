@@ -3,8 +3,10 @@ import Notification from './components/Notification'
 import { useQuery, useMutation, useQueryClient, } from '@tanstack/react-query'
 import axios from 'axios'
 import { getAnecdotes, addVote } from './requests'
+import { useNotification } from './context/NotificationContext'
 
 const App = () => {
+  const { showNotification } = useNotification()
   const queryClient = useQueryClient()
   const result = useQuery({
     queryKey: ['anecdotes'],
@@ -21,7 +23,8 @@ const App = () => {
 
   const handleVote = (anecdote) => {
     updatedAnecdoteMutation.mutate({ ...anecdote, votes: anecdote.votes + 1 })
-    console.log('vote')
+    console.log('voted anecdote', anecdote)
+    showNotification(`You voted '${anecdote.content}'`)
   }
 
   if (result.isLoading) {
@@ -39,7 +42,6 @@ const App = () => {
   return (
     <div>
       <h3>Anecdote app</h3>
-
       <Notification />
       <AnecdoteForm />
 
