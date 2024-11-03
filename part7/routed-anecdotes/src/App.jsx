@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { BrowserRouter as Router, Link, Route, Routes } from 'react-router-dom'
 
 const Menu = () => {
   const padding = {
@@ -6,9 +7,9 @@ const Menu = () => {
   }
   return (
     <div>
-      <a href='#' style={padding}>anecdotes</a>
-      <a href='#' style={padding}>create new</a>
-      <a href='#' style={padding}>about</a>
+      <Link className='link' to={"/anecdotes"}>anecdotes</Link>
+      <Link className='link' to={"/create"}>create new</Link>
+      <Link className='link' to={"/about"}>about</Link>
     </div>
   )
 }
@@ -74,7 +75,7 @@ const CreateNew = (props) => {
         </div>
         <div>
           url for more info
-          <input name='info' value={info} onChange={(e)=> setInfo(e.target.value)} />
+          <input name='info' value={info} onChange={(e) => setInfo(e.target.value)} />
         </div>
         <button>create</button>
       </form>
@@ -124,11 +125,18 @@ const App = () => {
 
   return (
     <div>
-      <h1>Software anecdotes</h1>
-      <Menu />
-      <AnecdoteList anecdotes={anecdotes} />
-      <About />
-      <CreateNew addNew={addNew} />
+      <Router>
+        <div>
+          <h1>Software anecdotes</h1>
+          <Menu />
+          <Routes>
+            <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
+            <Route path="/anecdotes" element={<AnecdoteList anecdotes={anecdotes} />} />
+            <Route path="/create" Component={CreateNew} />
+            <Route path='/about' Component={About} />
+          </Routes>
+        </div>
+      </Router>
       <Footer />
     </div>
   )
