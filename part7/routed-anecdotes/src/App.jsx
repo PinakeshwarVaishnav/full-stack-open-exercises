@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { BrowserRouter as Router, Link, Route, Routes, useParams, useNavigate } from 'react-router-dom'
+import useField from './hooks/index'
 
 const Menu = () => {
   const padding = {
@@ -38,7 +39,7 @@ const AnecdoteDetail = ({ anecdotes }) => {
     <div>
       <h1>{anecdote.content}</h1>
       <li>has {anecdote.votes} votes</li>
-      <li>for more info see <Link to={anecdote.info}> {anecdote.info}></Link></li>
+      <li>for more info see <Link to={anecdote.info}> {anecdote.info}</Link></li>
     </div >
   )
 }
@@ -66,21 +67,22 @@ const Footer = () => (
 )
 
 const CreateNew = ({ addNew, setNotification }) => {
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
+  const inputContent = useField('content')
+  const inputAuthor = useField('author')
+  const inputInfo = useField('info')
   const navigate = useNavigate()
   let timeOutId
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    addNew({
-      content,
-      author,
-      info,
+    const createdAnecdote = {
+      content: inputContent.value,
+      author: inputAuthor.value,
+      info: inputInfo.value,
       votes: 0
-    })
-    setNotification(`a new anecdote ${content} created!`)
+    }
+    addNew(createdAnecdote)
+    setNotification(`a new anecdote ${createdAnecdote.content} created!`)
 
     if (timeOutId) {
       clearTimeout(timeOutId)
@@ -105,15 +107,15 @@ const CreateNew = ({ addNew, setNotification }) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
+          <input {...inputContent} />
         </div>
         <div>
           author
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
+          <input {...inputAuthor} />
         </div>
         <div>
           url for more info
-          <input name='info' value={info} onChange={(e) => setInfo(e.target.value)} />
+          <input {...inputInfo} />
         </div>
         <button>create</button>
       </form>
