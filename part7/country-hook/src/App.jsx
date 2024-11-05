@@ -28,6 +28,7 @@ const useCountry = (name, shouldFetch) => {
           setCountry(result)
         } catch (error) {
           console.log('error while fetching data', error.message)
+          setCountry(error.message)
         }
       }
 
