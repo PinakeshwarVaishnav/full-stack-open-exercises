@@ -8,10 +8,15 @@ const useField = (type) => {
 	}
 	console.log('state of the input value is', value)
 
+	const reset = () => {
+		setValue('')
+	}
+
 	return {
 		type,
 		value,
-		onChange
+		onChange,
+		reset
 	}
 }
 

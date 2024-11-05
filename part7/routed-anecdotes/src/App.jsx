@@ -73,6 +73,12 @@ const CreateNew = ({ addNew, setNotification }) => {
   const navigate = useNavigate()
   let timeOutId
 
+  const handleReset = () => {
+    inputContent.reset()
+    inputAuthor.reset()
+    inputInfo.reset()
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
     const createdAnecdote = {
@@ -107,17 +113,18 @@ const CreateNew = ({ addNew, setNotification }) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input {...inputContent} />
+          <input {...{ ...inputContent, reset: undefined }} />
         </div>
         <div>
           author
-          <input {...inputAuthor} />
+          <input  {...{ ...inputAuthor, reset: undefined }} />
         </div>
         <div>
           url for more info
-          <input {...inputInfo} />
+          <input  {...{ ...inputInfo, reset: undefined }} />
         </div>
         <button>create</button>
+        <button type='button' onClick={handleReset}>reset</button>
       </form>
     </div>
   )
