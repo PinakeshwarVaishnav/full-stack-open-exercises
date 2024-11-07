@@ -96,8 +96,8 @@ const App = () => {
   useEffect(() => {
     if (notifications) {
       const timer = setTimeout(() => {
-        clearNotification(notifications)
-      }, 5000)
+        dispatch(clearNotification())
+      }, 3000)
 
       return () => {
         clearTimeout(timer)
