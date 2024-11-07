@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { addNotification, clearNotification } from './features/notification/notificationSlice'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import axios from 'axios'
+import { useDispatch, useSelector } from 'react-redux'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -14,12 +16,13 @@ const App = () => {
     url: "",
   })
   const [username, setUsername] = useState('')
-  const [message, setMessage] = useState(null)
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [isVisible, setIsVisible] = useState(false)
   const [updatedBlogId, setUpdatedBlogId] = useState(null)
   const [sortOrder, setSortOrder] = useState('asc')
+  const notifications = useSelector(state => state.notifications)
+  const dispatch = useDispatch()
 
   const sortBlogsByLikes = (order) => {
     const sortedBlogs = [...blogs].sort((a, b) => {
@@ -69,8 +72,7 @@ const App = () => {
     } catch (error) {
       const errorMessage = error.response ? error.response.data.error : "Wrong username or password"
       console.log('Login Error:', error)
-      setMessage(errorMessage)
-      console.log('message is set to', message)
+      dispatch(addNotification(errorMessage))
     }
   }
 
@@ -92,20 +94,20 @@ const App = () => {
   }, [updatedBlogId])
 
   useEffect(() => {
-    if (message) {
+    if (notifications) {
       const timer = setTimeout(() => {
-        setMessage(null)
+        clearNotification(notifications)
       }, 5000)
 
       return () => {
         clearTimeout(timer)
       }
     }
-  }, [message])
+  }, [notifications])
 
   useEffect(() => {
-    console.log('message state is', message)
-  }, [message])
+    console.log('notification state is', notifications)
+  }, [notifications])
 
   useEffect(() => {
     const loggedUserJSON =
@@ -146,7 +148,7 @@ const App = () => {
     const userDetails = await userResponse.data
 
     setBlogs((prevBlogs) => [...prevBlogs, { ...response, user: userDetails }])
-    setMessage(`a new blog ${newBlog.title} by ${newBlog.author} added`)
+    dispatch(`a new blog ${newBlog.title} by ${newBlog.author} added`)
 
 
     setNewBlog(
@@ -162,7 +164,7 @@ const App = () => {
   if (user === null) {
     return (
       <div>
-        <Notification message={message} />
+        <Notification />
         <h2>Log in to application</h2>
         <form onSubmit={handleLogin}>
           <div>
@@ -217,7 +219,7 @@ const App = () => {
   return (
     <div>
       <h1>blogs</h1>
-      <Notification message={message} />
+      <Notification />
       {user !== null &&
         (
           <div>

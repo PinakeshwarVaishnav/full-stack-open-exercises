@@ -10,19 +10,15 @@ const Notification = () => {
     return null
   }
 
+  if (notifications.includes('invalid')) {
+    console.log('message includes invalid')
+    return <div className="error"> {notifications}</div>
+  }
 
-  return notifications.map(notification => {
+  return <div className="blog">{notifications}</div>
 
-
-    if (notification.message.includes('invalid')) {
-      console.log('message includes invalid')
-      return <div className="error"> {notification.message}</div>
-    }
-
-    return <div className="blog">{notification.message}</div>
-
-  })
 }
+
 
 
 export default Notification
