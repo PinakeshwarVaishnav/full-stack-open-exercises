@@ -6,6 +6,7 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import { addNotification, clearNotification } from './features/notification/notificationSlice'
 import { fetchBlogs, addNewBlog, removeBlog, likeBlog } from './features/blogs/blogSlice'
+import { setUser, clearUser } from './features/user/userSlice.js'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -17,14 +18,16 @@ const App = () => {
   })
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
   const [isVisible, setIsVisible] = useState(false)
   const [sortOrder, setSortOrder] = useState('asc')
   const notifications = useSelector(state => state.notifications)
   const blogs = useSelector(state => state.blogs)
   console.log('blogs state is', blogs)
   const dispatch = useDispatch()
-  const { items, loading, error } = useSelector((state) => state.blogs)
+  const { items, loading, error } = blogs
+  const user = useSelector(state => state.user)
+  const { isAuthenticated, userInfo } = user
+  console.log('user state is', user)
 
   const sortBlogsByLikes = (order) => {
     const sortedBlogs = [...items].sort((a, b) => {
@@ -48,7 +51,7 @@ const App = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('loggedBlogappUser')
-    setUser(null)
+    dispatch(clearUser())
   }
 
   const handleLogin = async (event) => {
@@ -67,7 +70,7 @@ const App = () => {
       )
 
       blogService.setToken(user.token)
-      setUser(user)
+      dispatch(setUser(user))
       setUsername('')
       setPassword('')
 
@@ -106,7 +109,7 @@ const App = () => {
     if (loggedUserJSON && loggedUserJSON !== '' && loggedUserJSON !== undefined && loggedUserJSON !== null) {
       const user = JSON.parse(loggedUserJSON)
       console.log('Parsed user', user)
-      setUser(user)
+      dispatch(setUser(user))
       blogService.setToken(user.token)
     }
   }, [])
@@ -142,7 +145,7 @@ const App = () => {
     setIsVisible(false)
   }
 
-  if (user === null) {
+  if (!user || !isAuthenticated) {
     return (
       <div>
         <Notification />
@@ -214,7 +217,7 @@ const App = () => {
         (
           <div>
             <div className='container'>
-              <p>{user.name} logged in </p>
+              <p>{user.userInfo.username} logged in </p>
               <button className='logout-button' onClick={handleLogout}>
                 Logout
               </button>
