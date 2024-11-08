@@ -5,7 +5,7 @@ import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { addNotification, clearNotification } from './features/notification/notificationSlice'
-import { fetchBlogs, addNewBlog } from './features/blogs/blogSlice'
+import { fetchBlogs, addNewBlog, removeBlog, likeBlog } from './features/blogs/blogSlice'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -19,7 +19,6 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [isVisible, setIsVisible] = useState(false)
-  const [updatedBlogId, setUpdatedBlogId] = useState(null)
   const [sortOrder, setSortOrder] = useState('asc')
   const notifications = useSelector(state => state.notifications)
   const blogs = useSelector(state => state.blogs)
@@ -31,11 +30,11 @@ const App = () => {
     const sortedBlogs = [...items].sort((a, b) => {
       return order === 'asc' ? a.likes - b.likes : b.likes - a.likes
     })
-    items(sortedBlogs)
+    return items(sortedBlogs)
   }
 
   const handleRemovedBlog = (blogId) => {
-    items.filter(blog => blog.id !== blogId)
+    dispatch(removeBlog(blogId))
   }
 
   const toggleForm = () => {
@@ -44,7 +43,7 @@ const App = () => {
 
 
   const handleUpdatedBlog = (updatedBlogIdData) => {
-    setUpdatedBlogId(updatedBlogIdData)
+    dispatch(likeBlog(updatedBlogIdData))
   }
 
   const handleLogout = () => {
@@ -112,17 +111,7 @@ const App = () => {
     }
   }, [])
 
-  useEffect(() => {
-    if (updatedBlogId) {
-      const timer = setTimeout(() => {
-        setUpdatedBlogId(null)
-      }, 1000)
 
-      return () => {
-        clearTimeout(timer)
-      }
-    }
-  }, [updatedBlogId])
 
   const addBlog = async (event) => {
     event.preventDefault()

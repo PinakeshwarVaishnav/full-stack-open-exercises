@@ -27,6 +27,19 @@ const blogSlice = createSlice({
       state.items.push(action.payload);
       console.log("added new blog", action.payload);
     },
+    removeBlog: (state, action) => {
+      state.items = state.items.filter((blog) => blog.id !== action.payload);
+    },
+    likeBlog: (state, action) => {
+      console.log("updating blog likes for blog with id", action.payload);
+      const blogId = action.payload;
+      const blog = state.items.find((blog) => blog.id === blogId);
+
+      if (blog) {
+        console.log("blog found", blog);
+        blog.likes++;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -45,5 +58,5 @@ const blogSlice = createSlice({
   },
 });
 
-export const { addNewBlog } = blogSlice.actions;
+export const { addNewBlog, removeBlog, likeBlog } = blogSlice.actions;
 export default blogSlice.reducer;
