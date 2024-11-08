@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import Notification from './components/Notification'
+import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { addNotification, clearNotification } from './features/notification/notificationSlice'
-import Notification from './components/Notification'
-import BlogForm from './components/BlogForm'
+import { fetchBlogs, addNewBlog } from './features/blogs/blogSlice'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [newBlog, setNewBlog] = useState({
     title: "",
     author: "",
@@ -22,17 +22,20 @@ const App = () => {
   const [updatedBlogId, setUpdatedBlogId] = useState(null)
   const [sortOrder, setSortOrder] = useState('asc')
   const notifications = useSelector(state => state.notifications)
+  const blogs = useSelector(state => state.blogs)
+  console.log('blogs state is', blogs)
   const dispatch = useDispatch()
+  const { items, loading, error } = useSelector((state) => state.blogs)
 
   const sortBlogsByLikes = (order) => {
-    const sortedBlogs = [...blogs].sort((a, b) => {
+    const sortedBlogs = [...items].sort((a, b) => {
       return order === 'asc' ? a.likes - b.likes : b.likes - a.likes
     })
-    setBlogs(sortedBlogs)
+    items(sortedBlogs)
   }
 
   const handleRemovedBlog = (blogId) => {
-    setBlogs((prevBlogs) => prevBlogs.filter(blog => blog.id !== blogId))
+    items.filter(blog => blog.id !== blogId)
   }
 
   const toggleForm = () => {
@@ -76,22 +79,11 @@ const App = () => {
     }
   }
 
-  const fetchBlogs = async () => {
-    try {
-      const blogs = await blogService.getAll()
-      if (blogs) {
-        setBlogs(blogs)
-      } else {
-        console.log('No blogs found')
-      }
-    } catch (error) {
-      console.error('Error fetching blogs', error)
-    }
-  }
+
   useEffect(() => {
-    fetchBlogs()
-    console.log('updated blog id is', updatedBlogId)
-  }, [updatedBlogId])
+    console.log('fetching blogs...')
+    dispatch(fetchBlogs())
+  }, [dispatch])
 
   useEffect(() => {
     if (notifications) {
@@ -147,8 +139,8 @@ const App = () => {
     const userResponse = await axios.get(`/api/users/${userId}`)
     const userDetails = await userResponse.data
 
-    setBlogs((prevBlogs) => [...prevBlogs, { ...response, user: userDetails }])
-    dispatch(`a new blog ${newBlog.title} by ${newBlog.author} added`)
+    dispatch(addNewBlog({ ...response, user: userDetails }))
+    dispatch(addNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`))
 
 
     setNewBlog(
@@ -216,6 +208,15 @@ const App = () => {
     const response = await blogService.updateBlog(updatedBlog)
     console.log('updated blog is', response)
   }
+
+  if (loading) {
+    return <div>Loading...</div>
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>
+  }
+
   return (
     <div>
       <h1>blogs</h1>
@@ -246,7 +247,7 @@ const App = () => {
       }
       <br />
       {
-        blogs.map(blog =>
+        blogs.items.map(blog =>
           <Blog key={blog.id} blog={blog} user={user.username} handleLikeChange={handleLikeChange} handleRemovedBlog={handleRemovedBlog} />
         )
       }
