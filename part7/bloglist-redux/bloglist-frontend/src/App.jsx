@@ -85,7 +85,7 @@ const App = () => {
         console.log('No blogs found')
       }
     } catch (error) {
-      console.error('Error fetching blogs'.error)
+      console.error('Error fetching blogs', error)
     }
   }
   useEffect(() => {
