@@ -5,6 +5,7 @@ import loginService from './services/login'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import axios from 'axios'
+import { useNotification, NotificationProvider } from './context/NotificationContext'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -162,7 +163,9 @@ const App = () => {
   if (user === null) {
     return (
       <div>
-        <Notification message={message} />
+        <NotificationProvider>
+          <Notification />
+        </NotificationProvider>
         <h2>Log in to application</h2>
         <form onSubmit={handleLogin}>
           <div>
