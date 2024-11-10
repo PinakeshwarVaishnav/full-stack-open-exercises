@@ -1,19 +1,17 @@
-import { useNotification } from '../context/NotificationContext'
+import { useContext } from 'react'
+import { NotificationContext } from '../context/NotificationContext'
 
 const Notification = () => {
-  const [state, dispatch] = useNotification()
-  const notification = state.notification
+  const state = useContext(NotificationContext)
+  const notification = state
   console.log('state of the notification is', notification)
-  if (!notification) {
-    return null
-  }
 
-  if (notification.includes('invalid')) {
-    console.log('message includes invalid')
-    return <div className="error"> {notification}</div>
-  }
+  if (!notification) return null
 
-  return <div className="blog">{notification}</div>
+  return (
+    <div className='notification'>
+      {notification}    </div>
+  )
 }
 
 export default Notification

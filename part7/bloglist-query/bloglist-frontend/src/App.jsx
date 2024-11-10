@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import axios from 'axios'
-import { useNotification, NotificationProvider } from './context/NotificationContext'
+import { NotificationContext, NotificationDispatchContext } from './context/NotificationContext'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -15,12 +15,13 @@ const App = () => {
     url: "",
   })
   const [username, setUsername] = useState('')
-  const [message, setMessage] = useState(null)
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [isVisible, setIsVisible] = useState(false)
   const [updatedBlogId, setUpdatedBlogId] = useState(null)
   const [sortOrder, setSortOrder] = useState('asc')
+  const notification = useContext(NotificationContext)
+  const dispatchNotification = useContext(NotificationDispatchContext)
 
   const sortBlogsByLikes = (order) => {
     const sortedBlogs = [...blogs].sort((a, b) => {
@@ -70,8 +71,8 @@ const App = () => {
     } catch (error) {
       const errorMessage = error.response ? error.response.data.error : "Wrong username or password"
       console.log('Login Error:', error)
-      setMessage(errorMessage)
-      console.log('message is set to', message)
+      dispatchNotification(errorMessage)
+      console.log('notification is set to', notification)
     }
   }
 
@@ -93,20 +94,16 @@ const App = () => {
   }, [updatedBlogId])
 
   useEffect(() => {
-    if (message) {
+    if (notification) {
       const timer = setTimeout(() => {
-        setMessage(null)
+        dispatchNotification({ type: 'CLEAR' })
       }, 5000)
 
       return () => {
         clearTimeout(timer)
       }
     }
-  }, [message])
-
-  useEffect(() => {
-    console.log('message state is', message)
-  }, [message])
+  }, [notification])
 
   useEffect(() => {
     const loggedUserJSON =
@@ -147,8 +144,7 @@ const App = () => {
     const userDetails = await userResponse.data
 
     setBlogs((prevBlogs) => [...prevBlogs, { ...response, user: userDetails }])
-    setMessage(`a new blog ${newBlog.title} by ${newBlog.author} added`)
-
+    dispatchNotification({ type: 'ADD', payload: `a new blog ${newBlog.title} by ${newBlog.author} added` })
 
     setNewBlog(
       {
@@ -163,9 +159,7 @@ const App = () => {
   if (user === null) {
     return (
       <div>
-        <NotificationProvider>
-          <Notification />
-        </NotificationProvider>
+        <Notification />
         <h2>Log in to application</h2>
         <form onSubmit={handleLogin}>
           <div>
@@ -220,7 +214,7 @@ const App = () => {
   return (
     <div>
       <h1>blogs</h1>
-      <Notification message={message} />
+      <Notification />
       {user !== null &&
         (
           <div>
