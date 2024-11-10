@@ -20,7 +20,6 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [isVisible, setIsVisible] = useState(false)
-  const [updatedBlogId, setUpdatedBlogId] = useState(null)
   const [sortOrder, setSortOrder] = useState('asc')
   const notification = useContext(NotificationContext)
   const dispatchNotification = useContext(NotificationDispatchContext)
@@ -46,9 +45,7 @@ const App = () => {
   }
 
 
-  const handleUpdatedBlog = (updatedBlogIdData) => {
-    setUpdatedBlogId(updatedBlogIdData)
-  }
+
 
   const handleLogout = () => {
     localStorage.removeItem('loggedBlogappUser')
@@ -107,17 +104,7 @@ const App = () => {
     }
   }, [])
 
-  useEffect(() => {
-    if (updatedBlogId) {
-      const timer = setTimeout(() => {
-        setUpdatedBlogId(null)
-      }, 1000)
 
-      return () => {
-        clearTimeout(timer)
-      }
-    }
-  }, [updatedBlogId])
 
   const addBlog = async (event) => {
     event.preventDefault()
@@ -182,21 +169,6 @@ const App = () => {
     })
     console.log('new blog being created is', newBlog)
   }
-  const handleLikeChange = async (blog) => {
-    event.preventDefault()
-    console.log('blog id is', blog.id)
-    const updatedBlog = {
-      likes: blog.likes + 1,
-      author: blog.author,
-      title: blog.title,
-      url: blog.url,
-      id: blog.id
-    }
-
-    handleUpdatedBlog(updatedBlog.id)
-    const response = await blogService.updateBlog(updatedBlog)
-    console.log('updated blog is', response)
-  }
 
   if (isLoading) return <div>Loading Blogs...</div>
 
@@ -233,7 +205,7 @@ const App = () => {
       <br />
       {
         data.map(blog =>
-          <Blog key={blog.id} blog={blog} user={user.username} handleLikeChange={handleLikeChange} />
+          <Blog key={blog.id} blog={blog} user={user.username} />
         )
       }
     </div >
