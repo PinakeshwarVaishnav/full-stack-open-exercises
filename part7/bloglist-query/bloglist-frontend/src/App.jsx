@@ -6,9 +6,11 @@ import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import axios from 'axios'
 import { NotificationContext, NotificationDispatchContext } from './context/NotificationContext'
+import { useFetchBlogs } from './hooks/useFetchBlogs'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  const { data, error, isLoading } = useFetchBlogs()
   const [newBlog, setNewBlog] = useState({
     title: "",
     author: "",
@@ -22,16 +24,21 @@ const App = () => {
   const [sortOrder, setSortOrder] = useState('asc')
   const notification = useContext(NotificationContext)
   const dispatchNotification = useContext(NotificationDispatchContext)
+  const queryClient = useQueryClient()
+  const mutation = useMutation({
+    mutationFn:
+      (blogService.create),
+    onSuccess: (newBlog) => {
+      queryClient.invalidateQueries(['blogs'])
+      console.log('new blog created', newBlog)
+    }
+  })
 
   const sortBlogsByLikes = (order) => {
     const sortedBlogs = [...blogs].sort((a, b) => {
       return order === 'asc' ? a.likes - b.likes : b.likes - a.likes
     })
     setBlogs(sortedBlogs)
-  }
-
-  const handleRemovedBlog = (blogId) => {
-    setBlogs((prevBlogs) => prevBlogs.filter(blog => blog.id !== blogId))
   }
 
   const toggleForm = () => {
@@ -76,22 +83,6 @@ const App = () => {
     }
   }
 
-  const fetchBlogs = async () => {
-    try {
-      const blogs = await blogService.getAll()
-      if (blogs) {
-        setBlogs(blogs)
-      } else {
-        console.log('No blogs found')
-      }
-    } catch (error) {
-      console.error('Error fetching blogs'.error)
-    }
-  }
-  useEffect(() => {
-    fetchBlogs()
-    console.log('updated blog id is', updatedBlogId)
-  }, [updatedBlogId])
 
   useEffect(() => {
     if (notification) {
@@ -135,15 +126,10 @@ const App = () => {
       author: newBlog.author,
       url: newBlog.url,
     }
+
+    mutation.mutate(blogObject)
     console.log('new created blog is', blogObject)
 
-    const response = await blogService.create(blogObject)
-    const userId = response.user
-
-    const userResponse = await axios.get(`/api/users/${userId}`)
-    const userDetails = await userResponse.data
-
-    setBlogs((prevBlogs) => [...prevBlogs, { ...response, user: userDetails }])
     dispatchNotification({ type: 'ADD', payload: `a new blog ${newBlog.title} by ${newBlog.author} added` })
 
     setNewBlog(
@@ -211,6 +197,11 @@ const App = () => {
     const response = await blogService.updateBlog(updatedBlog)
     console.log('updated blog is', response)
   }
+
+  if (isLoading) return <div>Loading Blogs...</div>
+
+  if (error) return <div>Error fetching Blogs: {error.message}</div>
+
   return (
     <div>
       <h1>blogs</h1>
@@ -241,8 +232,8 @@ const App = () => {
       }
       <br />
       {
-        blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} user={user.username} handleLikeChange={handleLikeChange} handleRemovedBlog={handleRemovedBlog} />
+        data.map(blog =>
+          <Blog key={blog.id} blog={blog} user={user.username} handleLikeChange={handleLikeChange} />
         )
       }
     </div >
