@@ -31,3 +31,7 @@ h1 {
 .button {
 	margin-left: 10px;
 }
+
+.bold {
+	font-weight: bold;
+}

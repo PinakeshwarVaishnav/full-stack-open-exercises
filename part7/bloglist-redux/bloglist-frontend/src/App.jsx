@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Route, Routes, Link, useLocation } from 'react-router-dom'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
@@ -9,6 +10,7 @@ import { fetchBlogs, addNewBlog, removeBlog, likeBlog } from './features/blogs/b
 import { setUser, clearUser } from './features/user/userSlice.js'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
+import User from './components/User'
 
 const App = () => {
   const [newBlog, setNewBlog] = useState({
@@ -28,6 +30,7 @@ const App = () => {
   const user = useSelector(state => state.user)
   const { isAuthenticated, userInfo } = user
   console.log('user state is', user)
+  const location = useLocation()
 
   const sortBlogsByLikes = (order) => {
     const sortedBlogs = [...items].sort((a, b) => {
@@ -222,27 +225,34 @@ const App = () => {
                 Logout
               </button>
             </div>
-            <div>
-              {isVisible && (
-                <BlogForm addBlog={addBlog} newBlog={newBlog} handleChange={handleChange} />
-              )}
-              <button onClick={toggleForm}>
-                {isVisible ? 'Cancel' : ' create new blog'}
-              </button>
+            <h1><Link to='/users'> Users</Link></h1>
+            <Routes>
+              <Route path="/users" element={<User />} />
+            </Routes>
+
+            {location.pathname !== '/users' && (
               <div>
-                <button onClick={() => { setSortOrder('asc'); sortBlogsByLikes('asc') }}>Sort by lowest likes</button>
-                <button onClick={() => { setSortOrder('dsc'); sortBlogsByLikes('dsc') }}>Sort by highest likes</button>
+                {isVisible && (
+                  <BlogForm addBlog={addBlog} newBlog={newBlog} handleChange={handleChange} />
+                )}
+                <button onClick={toggleForm}>
+                  {isVisible ? 'Cancel' : ' create new blog'}
+                </button>
+                <div>
+                  <button onClick={() => { setSortOrder('asc'); sortBlogsByLikes('asc') }}>Sort by lowest likes</button>
+                  <button onClick={() => { setSortOrder('dsc'); sortBlogsByLikes('dsc') }}>Sort by highest likes</button>
+                </div>
+                {
+                  blogs.items.map(blog =>
+                    <Blog key={blog.id} blog={blog} user={user.userInfo.username} handleLikeChange={handleLikeChange} handleRemovedBlog={handleRemovedBlog} />
+                  )
+                }
               </div>
-            </div>
+            )}
           </div>
         )
       }
-      <br />
-      {
-        blogs.items.map(blog =>
-          <Blog key={blog.id} blog={blog} user={user.userInfo.username} handleLikeChange={handleLikeChange} handleRemovedBlog={handleRemovedBlog} />
-        )
-      }
+
     </div >
   )
 }
