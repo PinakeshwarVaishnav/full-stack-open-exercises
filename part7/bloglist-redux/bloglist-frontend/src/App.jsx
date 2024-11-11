@@ -240,7 +240,7 @@ const App = () => {
       <br />
       {
         blogs.items.map(blog =>
-          <Blog key={blog.id} blog={blog} user={user.username} handleLikeChange={handleLikeChange} handleRemovedBlog={handleRemovedBlog} />
+          <Blog key={blog.id} blog={blog} user={user.userInfo.username} handleLikeChange={handleLikeChange} handleRemovedBlog={handleRemovedBlog} />
         )
       }
     </div >
