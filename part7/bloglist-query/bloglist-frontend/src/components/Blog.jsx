@@ -17,11 +17,14 @@ const Blog = ({ blog, user }) => {
   })
   const likeMutation = useMutation({
     mutationFn: blogService.updateBlog,
-    onMutate: async (likedBlog) => {
+    onMutate: (likedBlog) => {
       console.log('blog received in like mutation is', likedBlog)
-      await queryClient.invalidateQueries('blogs')
-
     },
+    onSuccess: () => {
+      console.log('blog like increased')
+      queryClient.invalidateQueries(['blogs'])
+
+    }
   }
   )
 
