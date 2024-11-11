@@ -27,9 +27,14 @@ const App = () => {
   const mutation = useMutation({
     mutationFn:
       (blogService.create),
+    onMutate: (newBlog) => {
+      console.log('new blog to be added received in onMutate callback function')
+    },
     onSuccess: (newBlog) => {
       queryClient.invalidateQueries(['blogs'])
       console.log('new blog created', newBlog)
+      dispatchNotification({ type: 'ADD', payload: `a new blog ${newBlog.title} by ${newBlog.author} added` })
+
     }
   })
 
@@ -117,7 +122,6 @@ const App = () => {
     mutation.mutate(blogObject)
     console.log('new created blog is', blogObject)
 
-    dispatchNotification({ type: 'ADD', payload: `a new blog ${newBlog.title} by ${newBlog.author} added` })
 
     setNewBlog(
       {
