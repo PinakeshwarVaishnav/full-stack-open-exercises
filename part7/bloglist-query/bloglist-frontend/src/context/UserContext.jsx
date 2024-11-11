@@ -5,7 +5,7 @@ export const UserDispatchContext = createContext()
 
 const initialState = null
 
-const notificationReducer = (state, action) => {
+const userReducer = (state, action) => {
   switch (action.type) {
     case 'ADD':
       return action.payload
@@ -17,7 +17,7 @@ const notificationReducer = (state, action) => {
 }
 
 export const UserProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(notificationReducer, initialState)
+  const [state, dispatch] = useReducer(userReducer, initialState)
   return (
     <UserContext.Provider value={state}>
       <UserDispatchContext.Provider value={dispatch}>

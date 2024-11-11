@@ -8,6 +8,7 @@ import axios from 'axios'
 import { NotificationContext, NotificationDispatchContext } from './context/NotificationContext'
 import { useFetchBlogs } from './hooks/useFetchBlogs'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { UserContext, UserDispatchContext } from './context/UserContext'
 
 const App = () => {
   const { data, error, isLoading } = useFetchBlogs()
@@ -18,11 +19,12 @@ const App = () => {
   })
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
   const [isVisible, setIsVisible] = useState(false)
   const [sortOrder, setSortOrder] = useState('asc')
   const notification = useContext(NotificationContext)
   const dispatchNotification = useContext(NotificationDispatchContext)
+  const user = useContext(UserContext)
+  const dispatchUser = useContext(UserDispatchContext)
   const queryClient = useQueryClient()
   const mutation = useMutation({
     mutationFn:
@@ -54,7 +56,7 @@ const App = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('loggedBlogappUser')
-    setUser(null)
+    dispatchUser({ type: 'CLEAR' })
   }
 
   const handleLogin = async (event) => {
@@ -73,14 +75,14 @@ const App = () => {
       )
 
       blogService.setToken(user.token)
-      setUser(user)
+      dispatchUser({ type: 'ADD', payload: user })
       setUsername('')
       setPassword('')
 
     } catch (error) {
       const errorMessage = error.response ? error.response.data.error : "Wrong username or password"
       console.log('Login Error:', error)
-      dispatchNotification(errorMessage)
+      dispatchNotification({ type: 'ADD', payload: errorMessage })
       console.log('notification is set to', notification)
     }
   }
@@ -104,12 +106,14 @@ const App = () => {
     if (loggedUserJSON && loggedUserJSON !== '' && loggedUserJSON !== undefined && loggedUserJSON !== null) {
       const user = JSON.parse(loggedUserJSON)
       console.log('Parsed user', user)
-      setUser(user)
+      dispatchUser({ type: 'ADD', payload: user })
       blogService.setToken(user.token)
     }
   }, [])
 
-
+  useEffect(() => {
+    console.log('user is', user)
+  }, [user])
 
   const addBlog = async (event) => {
     event.preventDefault()
