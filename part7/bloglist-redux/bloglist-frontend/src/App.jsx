@@ -11,6 +11,7 @@ import { setUser, clearUser } from './features/user/userSlice.js'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import User from './components/User'
+import UserBlogs from './components/UserBlogs'
 
 const App = () => {
   const [newBlog, setNewBlog] = useState({
@@ -228,6 +229,7 @@ const App = () => {
             <h1><Link to='/users'> Users</Link></h1>
             <Routes>
               <Route path="/users" element={<User />} />
+              <Route path='/users/:id' element={<UserBlogs />} />
             </Routes>
 
             {location.pathname !== '/users' && (
