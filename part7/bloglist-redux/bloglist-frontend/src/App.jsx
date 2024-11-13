@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Route, Routes, Link, useLocation } from 'react-router-dom'
-import Blog from './components/Blog'
+import BlogComponent from './components/Blog'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
@@ -12,6 +12,7 @@ import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import User from './components/User'
 import UserBlogs from './components/UserBlogs'
+import BlogsList from './components/BlogsList.jsx'
 
 const App = () => {
   const [newBlog, setNewBlog] = useState({
@@ -22,7 +23,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [isVisible, setIsVisible] = useState(false)
-  const [sortOrder, setSortOrder] = useState('asc')
   const notifications = useSelector(state => state.notifications)
   const blogs = useSelector(state => state.blogs)
   console.log('blogs state is', blogs)
@@ -33,25 +33,16 @@ const App = () => {
   console.log('user state is', user)
   const location = useLocation()
 
-  const sortBlogsByLikes = (order) => {
-    const sortedBlogs = [...items].sort((a, b) => {
-      return order === 'asc' ? a.likes - b.likes : b.likes - a.likes
-    })
-    return items(sortedBlogs)
-  }
 
-  const handleRemovedBlog = (blogId) => {
-    dispatch(removeBlog(blogId))
-  }
+
+
 
   const toggleForm = () => {
     setIsVisible(!isVisible)
   }
 
 
-  const handleUpdatedBlog = (updatedBlogIdData) => {
-    dispatch(likeBlog(updatedBlogIdData))
-  }
+
 
   const handleLogout = () => {
     localStorage.removeItem('loggedBlogappUser')
@@ -189,21 +180,7 @@ const App = () => {
     })
     console.log('new blog being created is', newBlog)
   }
-  const handleLikeChange = async (blog) => {
-    event.preventDefault()
-    console.log('blog id is', blog.id)
-    const updatedBlog = {
-      likes: blog.likes + 1,
-      author: blog.author,
-      title: blog.title,
-      url: blog.url,
-      id: blog.id
-    }
 
-    handleUpdatedBlog(updatedBlog.id)
-    const response = await blogService.updateBlog(updatedBlog)
-    console.log('updated blog is', response)
-  }
 
   if (loading) {
     return <div>Loading...</div>
@@ -215,24 +192,26 @@ const App = () => {
 
   return (
     <div>
-      <h1><Link to={'/blogs'}>blogs</Link></h1>
+      <h1>blogs</h1>
       <Notification />
-      {user !== null &&
+      {
+        user !== null &&
         (
           <div>
             <div className='container'>
               <p>{user.userInfo.username} logged in </p>
-              <button className='logout-button' onClick={handleLogout}>
-                Logout
-              </button>
             </div>
-            <h1><Link to='/users'> Users</Link></h1>
+            <button className='logout-button' onClick={handleLogout}>
+              Logout
+            </button>
             <Routes>
               <Route path="/users" element={<User />} />
               <Route path='/users/:id' element={<UserBlogs />} />
+              <Route path='/blogs/:id' element={<BlogComponent />} />
             </Routes>
 
-            {location.pathname === '/blogs' && (
+
+            {location.pathname === '/' && (
               <div>
                 {isVisible && (
                   <BlogForm addBlog={addBlog} newBlog={newBlog} handleChange={handleChange} />
@@ -240,15 +219,8 @@ const App = () => {
                 <button onClick={toggleForm}>
                   {isVisible ? 'Cancel' : ' create new blog'}
                 </button>
-                <div>
-                  <button onClick={() => { setSortOrder('asc'); sortBlogsByLikes('asc') }}>Sort by lowest likes</button>
-                  <button onClick={() => { setSortOrder('dsc'); sortBlogsByLikes('dsc') }}>Sort by highest likes</button>
-                </div>
-                {
-                  blogs.items.map(blog =>
-                    <Blog key={blog.id} blog={blog} user={user.userInfo.username} handleLikeChange={handleLikeChange} handleRemovedBlog={handleRemovedBlog} />
-                  )
-                }
+                <BlogsList />
+
               </div>
             )}
           </div>
