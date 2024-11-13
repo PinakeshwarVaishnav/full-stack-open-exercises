@@ -35,3 +35,15 @@ h1 {
 .bold {
 	font-weight: bold;
 }
+
+.navbar-links {
+	list-style-type: none;
+	display: flex;
+	margin: 0;
+	padding: 0
+}
+
+.navbar-links li {
+	margin-right: 20px;
+	margin-bottom: 20px;
+}

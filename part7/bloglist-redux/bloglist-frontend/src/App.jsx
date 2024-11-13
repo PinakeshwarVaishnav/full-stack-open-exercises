@@ -2,27 +2,20 @@ import { useState, useEffect } from 'react'
 import { Route, Routes, Link, useLocation } from 'react-router-dom'
 import BlogComponent from './components/Blog'
 import Notification from './components/Notification'
-import BlogForm from './components/BlogForm'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { addNotification, clearNotification } from './features/notification/notificationSlice'
 import { fetchBlogs, addNewBlog, removeBlog, likeBlog } from './features/blogs/blogSlice'
 import { setUser, clearUser } from './features/user/userSlice.js'
-import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import User from './components/User'
 import UserBlogs from './components/UserBlogs'
 import BlogsList from './components/BlogsList.jsx'
+import NavBar from './components/NavBar.jsx'
 
 const App = () => {
-  const [newBlog, setNewBlog] = useState({
-    title: "",
-    author: "",
-    url: "",
-  })
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [isVisible, setIsVisible] = useState(false)
   const notifications = useSelector(state => state.notifications)
   const blogs = useSelector(state => state.blogs)
   console.log('blogs state is', blogs)
@@ -37,17 +30,12 @@ const App = () => {
 
 
 
-  const toggleForm = () => {
-    setIsVisible(!isVisible)
-  }
 
 
 
 
-  const handleLogout = () => {
-    localStorage.removeItem('loggedBlogappUser')
-    dispatch(clearUser())
-  }
+
+
 
   const handleLogin = async (event) => {
     console.log('login form submitted')
@@ -111,34 +99,7 @@ const App = () => {
 
 
 
-  const addBlog = async (event) => {
-    event.preventDefault()
-    const blogObject = {
-      title: newBlog.title,
-      author: newBlog.author,
-      url: newBlog.url,
-    }
-    console.log('new created blog is', blogObject)
 
-    const response = await blogService.create(blogObject)
-    const userId = response.user
-
-    const userResponse = await axios.get(`/api/users/${userId}`)
-    const userDetails = await userResponse.data
-
-    dispatch(addNewBlog({ ...response, user: userDetails }))
-    dispatch(addNotification(`a new blog ${newBlog.title} by ${newBlog.author} added`))
-
-
-    setNewBlog(
-      {
-        title: "",
-        author: "",
-        url: "",
-      }
-    )
-    setIsVisible(false)
-  }
 
   if (!user || !isAuthenticated) {
     return (
@@ -172,14 +133,7 @@ const App = () => {
     )
   }
 
-  const handleChange = (event) => {
-    const { name, value } = event.target
-    setNewBlog({
-      ...newBlog,
-      [name]: value
-    })
-    console.log('new blog being created is', newBlog)
-  }
+
 
 
   if (loading) {
@@ -192,37 +146,24 @@ const App = () => {
 
   return (
     <div>
-      <h1>blogs</h1>
+      <NavBar />
       <Notification />
       {
         user !== null &&
         (
           <div>
             <div className='container'>
-              <p>{user.userInfo.username} logged in </p>
             </div>
-            <button className='logout-button' onClick={handleLogout}>
-              Logout
-            </button>
             <Routes>
+              <Route path='/' element={<BlogsList />} />
+              <Route path='/blogs' element={<BlogsList />} />
               <Route path="/users" element={<User />} />
               <Route path='/users/:id' element={<UserBlogs />} />
               <Route path='/blogs/:id' element={<BlogComponent />} />
             </Routes>
 
 
-            {location.pathname === '/' && (
-              <div>
-                {isVisible && (
-                  <BlogForm addBlog={addBlog} newBlog={newBlog} handleChange={handleChange} />
-                )}
-                <button onClick={toggleForm}>
-                  {isVisible ? 'Cancel' : ' create new blog'}
-                </button>
-                <BlogsList />
 
-              </div>
-            )}
           </div>
         )
       }

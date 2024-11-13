@@ -88,7 +88,7 @@ const BlogComponent = () => {
           </div>
         )
       }
-      )
+
     </div >
   )
 }
