@@ -1,35 +1,36 @@
-import axios from "axios"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
+import { fetchUsers } from '../features/users/usersSlice'
 
 const UserBlogs = () => {
-  const [users, setUsers] = useState(null)
+  const dispatch = useDispatch()
+  const users = useSelector((state) => state.users.users)
+  const userStatus = useSelector((state) => state.users.status)
+  const error = useSelector((state) => state.users.error)
   const { id } = useParams()
   const userId = id
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      const response = await axios.get('/api/users')
-      setUsers(response.data)
-      console.log('users state is', users)
+    if (userStatus === 'idle') {
+      dispatch(fetchUsers())
     }
-    fetchUsers()
-  }, [])
+    console.log('users state is', users)
 
-  if (!users) return <div>Loading...</div>
+  }, [dispatch])
 
   const user = users.find((user) => {
-    user.id === userId
+    return user.id === userId
   })
-  console.log('users found', users)
+  console.log('user found', user)
 
   if (!user) {
-    return null
+    return <p>user not found</p>
   }
 
   return (
     <div>
-      <h1>{user.name}</h1>
+      <h2>{user.name}</h2>
       <h3>added blogs</h3>
       <ul>
         {user.blogs.map((blog) => (

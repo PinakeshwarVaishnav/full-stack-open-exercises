@@ -215,7 +215,7 @@ const App = () => {
 
   return (
     <div>
-      <h1>blogs</h1>
+      <h1><Link to={'/blogs'}>blogs</Link></h1>
       <Notification />
       {user !== null &&
         (
@@ -232,7 +232,7 @@ const App = () => {
               <Route path='/users/:id' element={<UserBlogs />} />
             </Routes>
 
-            {location.pathname !== '/users' && (
+            {location.pathname === '/blogs' && (
               <div>
                 {isVisible && (
                   <BlogForm addBlog={addBlog} newBlog={newBlog} handleChange={handleChange} />
