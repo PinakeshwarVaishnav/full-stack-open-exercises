@@ -1,24 +1,31 @@
-import axios from "axios"
 import { useEffect } from "react"
-import { useState } from "react"
 import { Link } from "react-router-dom"
+import { fetchUsers } from '../features/users/usersSlice'
+import { useDispatch, useSelector } from "react-redux"
 
 const User = () => {
-  const [users, setUsers] = useState(null)
+  const dispatch = useDispatch()
+  const users = useSelector((state) => state.users.users)
+  const userStatus = useSelector((state) => state.users.status)
+  const error = useSelector((state) => state.users.error)
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      const response = await axios.get('/api/users')
-      setUsers(response.data)
-      console.log('users state is', users)
+    if (userStatus === 'idle') {
+      dispatch(fetchUsers())
     }
-    fetchUsers()
-  }, [!users])
+    console.log('users state is', users)
 
-  if (!users) return <div>Loading...</div>
+  }, [dispatch])
+
 
   return (
     <div>
+      {userStatus === 'loading' && (
+        <p>Loading...</p>
+      )}
+      {userStatus === 'failed' && (
+        <p>Error: {error}</p>
+      )}
       <table>
         <thead>
           <tr>
@@ -30,14 +37,18 @@ const User = () => {
           {users.map(user => {
             return (
               <tr key={user.id}>
-                <Link to={`/users/${user.id}`}><td>{user.username}</td></Link>
+                <td>
+                  <Link to={`/users/${user.id}`}>
+                    {user.username}
+                  </Link>
+                </td>
                 <td>{user.blogs.length}</td>
               </tr>
             )
           })}
         </tbody>
       </table>
-    </div>
+    </div >
   )
 }
 
