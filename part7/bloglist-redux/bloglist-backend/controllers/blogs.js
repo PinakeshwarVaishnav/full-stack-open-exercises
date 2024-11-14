@@ -71,4 +71,25 @@ blogsRouter.put("/:id", authenticateToken, (request, response, next) => {
     .catch((error) => next(error));
 });
 
+blogsRouter.get("/:id/comments", async (req, res, next) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    res.json(blog.comments);
+  } catch (err) {
+    next(err);
+  }
+});
+
+blogsRouter.post("/:id/comments", async (req, res, next) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    console.log("body received for comment is", req.body);
+    blog.comments.push({ text: req.body.text });
+    await blog.save();
+    res.status(201).json({ text: req.body.text });
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = blogsRouter;

@@ -3,6 +3,7 @@ import blogService from '../services/blogs'
 import { useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
 import { fetchBlogs, addNewBlog, removeBlog, likeBlog } from '../features/blogs/blogSlice'
+import CommentSection from './CommentSection'
 
 const BlogComponent = () => {
   const dispatch = useDispatch()
@@ -88,7 +89,7 @@ const BlogComponent = () => {
           </div>
         )
       }
-
+      <CommentSection blogId={blogId} />
     </div >
   )
 }
