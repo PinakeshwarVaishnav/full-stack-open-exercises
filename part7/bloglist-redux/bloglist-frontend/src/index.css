@@ -1,4 +1,4 @@
-h1 {
+@tailwind base @tailwind components @tailwind utilities h1 {
 	color: green;
 	font-style: italic
 }
