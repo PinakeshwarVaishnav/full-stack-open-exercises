@@ -108,7 +108,7 @@ type Mutation {
 
 addBook(title: String!, author:String!, published: Int!, genres: [String!]!): Book!
 
-editAuthor(name: String!, setBornTo: Int!): Author!
+editAuthor(name: String!, setBornTo: Int!): Author
 }
 `;
 
@@ -166,7 +166,7 @@ const resolvers = {
     editAuthor: (parent, { name, setBornTo }) => {
       const authorIndex = authors.findIndex((author) => author.name === name);
       if (authorIndex === -1) {
-        throw new Error("author not found");
+        return null;
       }
       authors[authorIndex].born = setBornTo;
       return authors[authorIndex];
