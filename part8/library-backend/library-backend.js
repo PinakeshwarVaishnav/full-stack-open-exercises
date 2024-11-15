@@ -98,7 +98,7 @@ bookCount: Int!
 
 authorCount: Int!
 
-allBooks(author: String): [Book!]!
+allBooks(author: String, genre:String): [Book!]!
 
 allAuthors: [Author!]!
   }
@@ -112,14 +112,21 @@ const resolvers = {
     authorCount: () => {
       return authors.length;
     },
-    allBooks: (parent, { author }) => {
+    allBooks: (parent, { author, genre }) => {
       console.log("author parameter", author);
+      console.log("genre parameter", genre);
+      let filteredBooks = books;
+      if (genre) {
+        filteredBooks = books.filter((book) => {
+          return book.genres.includes(genre);
+        });
+      }
       if (author) {
-        return books.filter((book) => {
+        filteredBooks = books.filter((book) => {
           return book.author === author;
         });
       }
-      return books;
+      return filteredBooks;
     },
     allAuthors: () => {
       const bookCount = {};
