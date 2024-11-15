@@ -105,7 +105,10 @@ allAuthors: [Author!]!
   }
 
 type Mutation {
+
 addBook(title: String!, author:String!, published: Int!, genres: [String!]!): Book!
+
+editAuthor(name: String!, setBornTo: Int!): Author!
 }
 `;
 
@@ -159,6 +162,14 @@ const resolvers = {
       };
       books.push(newBook);
       return newBook;
+    },
+    editAuthor: (parent, { name, setBornTo }) => {
+      const authorIndex = authors.findIndex((author) => author.name === name);
+      if (authorIndex === -1) {
+        throw new Error("author not found");
+      }
+      authors[authorIndex].born = setBornTo;
+      return authors[authorIndex];
     },
   },
   Author: {
