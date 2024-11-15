@@ -87,6 +87,11 @@ published: Int!,
 genres: [String!]!
 }
 
+type Author {
+name: String!
+bookCount: Int!
+}
+
 type Query {
 
 bookCount: Int!
@@ -94,6 +99,8 @@ bookCount: Int!
 authorCount: Int!
 
 allBooks: [Book!]!
+
+allAuthors: [Author!]!
   }
 `;
 
@@ -107,6 +114,20 @@ const resolvers = {
     },
     allBooks: () => {
       return books;
+    },
+    allAuthors: () => {
+      const bookCount = {};
+      books.forEach((book) => {
+        if (bookCount[book.author]) {
+          bookCount[book.author]++;
+        } else {
+          bookCount[book.author] = 1;
+        }
+      });
+      return authors.map((author) => ({
+        name: author.name,
+        bookCount: bookCount[author.name] || 0,
+      }));
     },
   },
 };
