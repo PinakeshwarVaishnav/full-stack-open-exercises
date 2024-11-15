@@ -89,7 +89,8 @@ genres: [String!]!
 
 type Author {
 name: String!
-bookCount: Int!
+bookCount: Int!,
+born: Int
 }
 
 type Query {
@@ -102,6 +103,10 @@ allBooks(author: String, genre:String): [Book!]!
 
 allAuthors: [Author!]!
   }
+
+type Mutation {
+addBook(title: String!, author:String!, published: Int!, genres: [String!]!): Book!
+}
 `;
 
 const resolvers = {
@@ -141,6 +146,24 @@ const resolvers = {
         name: author.name,
         bookCount: bookCount[author.name] || 0,
       }));
+    },
+  },
+  Mutation: {
+    addBook: (parent, { title, author, published, genres }) => {
+      const newBook = {
+        id: books.length + 1,
+        title,
+        author,
+        published,
+        genres,
+      };
+      books.push(newBook);
+      return newBook;
+    },
+  },
+  Author: {
+    born: (book) => {
+      return book.born || null;
     },
   },
 };
