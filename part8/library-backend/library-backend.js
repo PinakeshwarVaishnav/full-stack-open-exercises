@@ -148,6 +148,7 @@ const resolvers = {
       return authors.map((author) => ({
         name: author.name,
         bookCount: bookCount[author.name] || 0,
+        born: author.born,
       }));
     },
   },
