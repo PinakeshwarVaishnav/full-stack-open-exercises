@@ -1,5 +1,7 @@
 const { ApolloServer } = require("@apollo/server");
 const { startStandaloneServer } = require("@apollo/server/standalone");
+const Book = require("./models/book");
+const Author = require("./models/author");
 
 let authors = [
   {
@@ -82,7 +84,7 @@ let books = [
 const typeDefs = `
 type Book {
 title: String!,
-author: String!,
+author: Author!,
 published: Int!,
 genres: [String!]!
 }
@@ -114,26 +116,28 @@ editAuthor(name: String!, setBornTo: Int!): Author
 
 const resolvers = {
   Query: {
-    bookCount: () => {
-      return books.length;
+    bookCount: async () => {
+      const count = await Book.countDocuments();
+      return count;
     },
     authorCount: () => {
       return authors.length;
     },
-    allBooks: (parent, { author, genre }) => {
+    allBooks: async (_, { author, genre }) => {
       console.log("author parameter", author);
       console.log("genre parameter", genre);
-      let filteredBooks = books;
+      const queryConditions = {};
+
       if (genre) {
-        filteredBooks = books.filter((book) => {
-          return book.genres.includes(genre);
-        });
+        queryConditions.genre = genre;
       }
+
       if (author) {
-        filteredBooks = books.filter((book) => {
-          return book.author === author;
-        });
+        queryConditions.author = author;
       }
+
+      const filteredBooks = await Book.find(queryConditions);
+
       return filteredBooks;
     },
     allAuthors: () => {
@@ -153,16 +157,16 @@ const resolvers = {
     },
   },
   Mutation: {
-    addBook: (parent, { title, author, published, genres }) => {
-      const newBook = {
+    addBook: async (_, { title, author, published, genres }) => {
+      const book = new Book({
         id: books.length + 1,
         title,
         author,
         published,
         genres,
-      };
-      books.push(newBook);
-      return newBook;
+      });
+      await book.save();
+      return book;
     },
     editAuthor: (parent, { name, setBornTo }) => {
       const authorIndex = authors.findIndex((author) => author.name === name);
