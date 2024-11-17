@@ -2,9 +2,10 @@ import { useMutation, useQuery } from '@apollo/client'
 import GET_AUTHORS from '../graphql/queries/GetAuthors.query'
 import ADD_AUTHOR_DETAIL from '../graphql/mutations/addAuthorDetail.mutation'
 import { useState } from 'react'
+import Select from 'react-select'
 
 const Authors = (props) => {
-  const [name, setName] = useState('')
+  const [selectedAuthor, setSelectedAuthor] = useState(null)
   const [born, setBorn] = useState('')
   const [addAuthorDetail] = useMutation(ADD_AUTHOR_DETAIL)
   const { loading, error, data } = useQuery(GET_AUTHORS)
@@ -22,15 +23,24 @@ const Authors = (props) => {
   const authors = [data.allAuthors]
   console.log('authors', authors)
 
+  const options = authors ? authors[0].map(author => ({
+    value: author.name,
+    label: author.name
+  })) : []
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('value of born before submitting', born)
-    console.log('value of name before submitting', name)
+    console.log('selected author value is', selectedAuthor)
+    if (!selectedAuthor || !born) {
+      alert('please select an author and enter a birth year')
+      return
+    }
+
     try {
       await addAuthorDetail({
-        variables: { name, setBornTo: parseInt(born) },
+        variables: { name: selectedAuthor.value, setBornTo: parseInt(born) },
         update(cache, { data: { addAuthorDetail } }) {
-          const updatedAuthors = authors[0].map(author => author.name === name ? {
+          const updatedAuthors = authors[0].map(author => author.name === selectedAuthor.value ? {
             ...author, born: born
           } : author)
 
@@ -41,8 +51,7 @@ const Authors = (props) => {
         }
       })
       setBorn('')
-      setName('')
-      console.log('added author detail',)
+      alert('author birth year updated successfully')
     } catch (err) {
       console.log('error updating author', err)
     }
@@ -69,12 +78,14 @@ const Authors = (props) => {
       </table>
       <h2>Set birthyear</h2>
       <form onSubmit={handleSubmit}>
-        <label >name</label>
-        <input type="text" value={name} onChange={e => setName(e.target.value)} />
-        <br />
-        <label >born</label>
-        <input type="text" value={born} onChange={e => setBorn(e.target.value)} />
-        <br />
+        <div>
+          <label >select author</label>
+          <Select options={options} onChange={setSelectedAuthor} value={selectedAuthor} placeholder="select an author" />
+        </div>
+        <div>
+          <label >born</label>
+          <input type="number" value={born} onChange={e => setBorn(e.target.value)} />
+        </div>
         <button type='submit'>update author</button>
       </form>
     </div>
