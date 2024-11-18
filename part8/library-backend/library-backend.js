@@ -1,7 +1,16 @@
+require("dotenv").config();
 const { ApolloServer } = require("@apollo/server");
 const { startStandaloneServer } = require("@apollo/server/standalone");
 const Book = require("./models/book");
 const Author = require("./models/author");
+const dbPassword = process.env.DB_PASSWORD;
+const mongoose = require("mongoose");
+const uri = `mongodb+srv://pinakeshwarvtech:${dbPassword}@cluster0.ebubh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+
+mongoose
+  .connect(uri)
+  .then(() => console.log("database connected"))
+  .catch((err) => console.log("error connecting to database", err));
 
 let authors = [
   {
