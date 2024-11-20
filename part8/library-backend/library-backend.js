@@ -7,6 +7,7 @@ const MONGODB_URI = process.env.MONGODB_URI;
 console.log("connecting to", MONGODB_URI);
 const mongoose = require("mongoose");
 const author = require("./models/author");
+const { validateInput } = require("./utility");
 
 mongoose
   .connect(MONGODB_URI)
@@ -210,6 +211,8 @@ const resolvers = {
   },
   Mutation: {
     addBook: async (_, args) => {
+      validateInput(args);
+
       const author = await Author.findOne({ name: args.author });
       let authorId;
 
