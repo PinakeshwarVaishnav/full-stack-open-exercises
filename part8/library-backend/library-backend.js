@@ -111,7 +111,7 @@ bookCount: Int!
 
 authorCount: Int!
 
-allBooks(author: String, genre:String): [Book!]!
+allBooks(author: String, genres:[String!]): [Book!]!
 
 allAuthors: [Author!]!
   }
@@ -134,28 +134,58 @@ const resolvers = {
       const count = await Author.countDocuments();
       return count;
     },
-    allBooks: async (_, { author, genre }) => {
-      if (!author && !genre) {
-        console.log("no filters for author and genre found");
+    allBooks: async (_, { author, genres }) => {
+      if (!author && !genres) {
+        console.log("no filters for author and genres found");
         return Book.find({}).populate("author");
       }
 
       console.log("author parameter", author);
-      console.log("genre parameter", genre);
+      console.log("genre parameter", genres);
 
       const queryConditions = {};
 
-      if (genre) {
-        queryConditions.genre = genre;
+      if (genres && genres.length > 0) {
+        queryConditions.genres = genres;
       }
 
       if (author) {
-        queryConditions.author = author;
+        const foundAuthor = await Author.findOne({ name: author });
+        if (foundAuthor) {
+          queryConditions.author = foundAuthor._id;
+        } else {
+          console.log("author not found");
+          return [];
+        }
       }
+      if (author && genres) {
+        const filteredBooks = await Book.find({
+          author: queryConditions.author,
+          genres: queryConditions.genres,
+        }).populate("author");
 
-      const filteredBooks = await Book.find(queryConditions).populate("author");
+        console.log(
+          "books with both author and genres filter are",
+          filteredBooks,
+        );
+        return filteredBooks;
+      } else if (author && !genres) {
+        const filteredBooks = await Book.find({
+          author: queryConditions.author,
+        }).populate("author");
 
-      return filteredBooks;
+        console.log("books with only author filter are", filteredBooks);
+        return filteredBooks;
+      } else if (!author && genres) {
+        const filteredBooks = await Book.find({
+          genres: queryConditions.genres,
+        }).populate("author");
+
+        console.log("books with only genres filter are", filteredBooks);
+        return filteredBooks;
+      } else {
+        return "no books found for the filters";
+      }
     },
     allAuthors: async () => {
       const authorsWithBookCount = await Author.aggregate([
@@ -199,9 +229,10 @@ const resolvers = {
           ...args,
           author: authorId,
         });
-        console.log("saving book", book);
         await book.save();
-        return book;
+        const newBook = await book.populate("author");
+        console.log("saved book", newBook);
+        return newBook;
       } catch (error) {
         console.log("error adding book", error);
         throw new Error("failed to add book");
