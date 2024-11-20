@@ -2,6 +2,7 @@ const { GraphQLError } = require("graphql");
 
 const validateInput = (args) => {
   const { title, author, genres } = args;
+  console.log("arguments passed to vaildateInput functions are", args);
 
   if (!title || title.length < 3) {
     throw new GraphQLError("title must be at least 3 characters long");
@@ -11,7 +12,7 @@ const validateInput = (args) => {
     throw new GraphQLError("author must be at least 4 characters long");
   }
 
-  if (genres || genres.length === 0) {
+  if (!genres || genres.length === 0) {
     throw new GraphQLError("genres cannot be empty");
   }
 };
