@@ -1,12 +1,10 @@
 import GET_BOOKS from '../graphql/queries/GetBooks.query'
 import { useQuery } from "@apollo/client"
 
-const Books = (props) => {
+const Books = () => {
   const { loading, error, data } = useQuery(GET_BOOKS)
 
-  if (!props.show) {
-    return null
-  }
+
 
   if (loading) return
   <p>loading</p>
@@ -20,7 +18,7 @@ const Books = (props) => {
 
   return (
     <div>
-      <h2>books</h2>
+      <h2 className="text-3xl font-bold p-3">books</h2>
 
       <table>
         <tbody>
@@ -38,7 +36,7 @@ const Books = (props) => {
           ))}
         </tbody>
       </table>
-    </div>
+    </div >
   )
 }
 

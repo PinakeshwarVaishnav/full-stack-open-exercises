@@ -4,14 +4,12 @@ import ADD_AUTHOR_DETAIL from '../graphql/mutations/addAuthorDetail.mutation'
 import { useState } from 'react'
 import Select from 'react-select'
 
-const Authors = (props) => {
+const Authors = () => {
   const [selectedAuthor, setSelectedAuthor] = useState(null)
   const [born, setBorn] = useState('')
   const [addAuthorDetail] = useMutation(ADD_AUTHOR_DETAIL)
   const { loading, error, data } = useQuery(GET_AUTHORS)
-  if (!props.show) {
-    return null
-  }
+
 
   console.log('data fetched ', data)
   if (loading) return
@@ -59,7 +57,7 @@ const Authors = (props) => {
 
   return (
     <div>
-      <h2>authors</h2>
+      <h2 className="text-3xl font-bold p-3">authors</h2>
       <table>
         <tbody>
           <tr>
