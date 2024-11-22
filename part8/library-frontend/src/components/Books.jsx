@@ -1,9 +1,10 @@
+import { useState } from 'react'
 import GET_BOOKS from '../graphql/queries/GetBooks.query'
 import { useQuery } from "@apollo/client"
 
 const Books = () => {
   const { loading, error, data } = useQuery(GET_BOOKS)
-
+  const [filteredBooks, setFilteredBooks] = useState(null)
 
 
   if (loading) return
@@ -15,6 +16,9 @@ const Books = () => {
   console.log('fetched data is', data)
   const books = [data.allBooks]
   console.log('books', books)
+  const genres = books[0].flatMap(book => book.genres)
+  const uniqueGenres = [...new Set(genres)]
+
 
   return (
     <div>
@@ -36,6 +40,10 @@ const Books = () => {
           ))}
         </tbody>
       </table>
+      {uniqueGenres.map(genre => (
+        <button className='bg-blue-500 hover:bg-blue-950 text-white font-bold p-1 px-2 rounded'>{genre}</button>
+      ))}
+      <button className='bg-blue-500 hover:bg-blue-950 text-white font-bold p-1 px-2 rounded'>all genres</button>
     </div >
   )
 }
