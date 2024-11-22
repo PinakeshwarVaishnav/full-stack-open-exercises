@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Authors from "./components/Authors";
 import Books from "./components/Books";
 import NewBook from "./components/NewBook";
@@ -16,7 +16,10 @@ const App = () => {
     client.resetStore()
   }
 
-
+  useEffect(() => {
+    setToken(localStorage.getItem('user-token'))
+    console.log('user token is ', token)
+  }, [])
 
   return (
     <Router>

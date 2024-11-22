@@ -6,13 +6,16 @@ import GET_BOOKS from '../graphql/queries/GetBooks.query'
 const NewBook = () => {
   const [addBook] = useMutation(ADD_BOOK, {
     update(cache, { data: { addBook } }) {
-      const books = cache.readQuery({ query: GET_BOOKS })
-      console.log('books before updating', books)
+      const { allBooks } = cache.readQuery({ query: GET_BOOKS })
+      console.log('books before updating', allBooks)
 
       cache.writeQuery({
         query: GET_BOOKS,
-        data: { allBooks: books.allBooks.concat([addBook]) }
+        data: { allBooks: [...allBooks, addBook] }
       })
+    },
+    onError: (error) => {
+      console.log('error adding book', error)
     }
   })
   const [title, setTitle] = useState('')
@@ -28,9 +31,10 @@ const NewBook = () => {
     event.preventDefault()
 
     console.log('add book...')
-    addBook({
-      variables: { title, published: publishedAsNumber, author, genres }
+    const response = await addBook({
+      variables: { title: title, author: author, published: publishedAsNumber, genres: genres }
     })
+    console.log('newbook response', response)
 
     setTitle('')
     setPublished('')
