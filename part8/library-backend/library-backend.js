@@ -193,7 +193,7 @@ const resolvers = {
       if (author && genres) {
         const filteredBooks = await Book.find({
           author: queryConditions.author,
-          genres: queryConditions.genres,
+          genres: { $in: queryConditions.genres },
         }).populate("author");
 
         console.log(
@@ -210,7 +210,7 @@ const resolvers = {
         return filteredBooks;
       } else if (!author && genres) {
         const filteredBooks = await Book.find({
-          genres: queryConditions.genres,
+          genres: { $in: queryConditions.genres },
         }).populate("author");
 
         console.log("books with only genres filter are", filteredBooks);

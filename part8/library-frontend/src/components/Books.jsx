@@ -1,45 +1,60 @@
 import { useEffect, useState } from 'react'
 import GET_BOOKS from '../graphql/queries/GetBooks.query'
+import GET_FILTERED_BOOKS from '../graphql/queries/GetFilteredBooks.query'
 import { useQuery } from "@apollo/client"
 
 const Books = () => {
-  const { loading, error, data } = useQuery(GET_BOOKS)
   const [books, setBooks] = useState([])
   const [genreSelected, setGenreSelected] = useState(null)
 
+  const { loading: loadingAll, error: errorAll, data: dataAll } = useQuery(GET_BOOKS)
+
+  const { loading: loadingFiltered, error: errorFiltered, data: dataFiltered } = useQuery(GET_FILTERED_BOOKS, {
+    variables: { genres: [genreSelected] },
+    skip: !genreSelected
+  })
+
   useEffect(() => {
-    if (data && Array.isArray(data.allBooks)) {
-      setBooks(data.allBooks)
+    if (dataAll && Array.isArray(dataAll.allBooks)) {
+      setBooks(dataAll.allBooks)
     }
-  }, [data])
+  }, [dataAll])
 
   useEffect(() => {
     console.log('books value', books)
-  })
+    console.log('books length is', books.length)
+  }, [books])
+
+  useEffect(() => {
+    if (dataFiltered && Array.isArray(dataFiltered.allBooks)) {
+      setBooks(dataFiltered.allBooks)
+    }
+  }, [dataFiltered])
 
 
-  if (loading) return
+  if (loadingAll || loadingFiltered) return
   <p>loading</p>
 
-  if (error) return
-  <p>error: {error}</p>
+  if (errorAll) return
+  <p>error fetching all books: {errorAll} </p>
 
-  console.log('fetched data is', data)
+  if (errorFiltered) return <p>error fetching filtered books : {errorFiltered}</p>
 
-  const genres = data.allBooks.flatMap(book => book.genres)
+
+
+  const genres = dataAll.allBooks.flatMap(book => book.genres)
   const uniqueGenres = [...new Set(genres)]
   console.log('unique genres array', uniqueGenres)
 
   const filterGenre = (genre) => {
-    const filteredBooks = books.filter(book => book.genres.includes(genre))
-    setBooks(filteredBooks)
     setGenreSelected(genre)
     console.log('filtered books by genre', genre)
   }
 
   const allGenres = () => {
-    setBooks(data.allBooks)
-    console.log('reset the genre filter')
+    setGenreSelected(null)
+    setBooks(dataAll.allBooks)
+    console.log('resetting genre filter')
   }
 
 
