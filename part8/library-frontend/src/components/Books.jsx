@@ -6,6 +6,7 @@ import { useQuery } from "@apollo/client"
 const Books = () => {
   const [books, setBooks] = useState([])
   const [genreSelected, setGenreSelected] = useState(null)
+  const [uniqueGenres, setUniqueGenres] = useState([])
 
   const { loading: loadingAll, error: errorAll, data: dataAll } = useQuery(GET_BOOKS)
 
@@ -17,12 +18,14 @@ const Books = () => {
   useEffect(() => {
     if (dataAll && Array.isArray(dataAll.allBooks)) {
       setBooks(dataAll.allBooks)
+      const genres = dataAll.allBooks.flatMap(book => book.genres)
+      setUniqueGenres([...new Set(genres)])
     }
   }, [dataAll])
 
   useEffect(() => {
     console.log('books value', books)
-    console.log('books length is', books.length)
+    console.log('unique genres array', uniqueGenres)
   }, [books])
 
   useEffect(() => {
@@ -41,10 +44,6 @@ const Books = () => {
   if (errorFiltered) return <p>error fetching filtered books : {errorFiltered}</p>
 
 
-
-  const genres = dataAll.allBooks.flatMap(book => book.genres)
-  const uniqueGenres = [...new Set(genres)]
-  console.log('unique genres array', uniqueGenres)
 
   const filterGenre = (genre) => {
     setGenreSelected(genre)
@@ -81,9 +80,10 @@ const Books = () => {
             )))}
         </tbody>
       </table>
-      {uniqueGenres.map((genre, index) => (
-        <button onClick={() => filterGenre(genre)} key={index} className='bg-blue-500 hover:bg-blue-950 text-white font-bold p-1 px-2 m-1 rounded'>{genre}</button>
-      ))}
+      {uniqueGenres && (
+        uniqueGenres.map((genre, index) => (
+          <button onClick={() => filterGenre(genre)} key={index} className='bg-blue-500 hover:bg-blue-950 text-white font-bold p-1 px-2 m-1 rounded'>{genre}</button>
+        )))}
       <button onClick={allGenres} className='bg-blue-500 hover:bg-blue-950 text-white font-bold p-1 px-2 rounded'>all genres</button>
     </div >
   )
