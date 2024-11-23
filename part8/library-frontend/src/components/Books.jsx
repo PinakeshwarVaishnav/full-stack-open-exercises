@@ -5,6 +5,7 @@ import { useQuery } from "@apollo/client"
 const Books = () => {
   const { loading, error, data } = useQuery(GET_BOOKS)
   const [books, setBooks] = useState([])
+  const [genreSelected, setGenreSelected] = useState(null)
 
   useEffect(() => {
     if (data && Array.isArray(data.allBooks)) {
@@ -32,6 +33,7 @@ const Books = () => {
   const filterGenre = (genre) => {
     const filteredBooks = books.filter(book => book.genres.includes(genre))
     setBooks(filteredBooks)
+    setGenreSelected(genre)
     console.log('filtered books by genre', genre)
   }
 
@@ -44,11 +46,11 @@ const Books = () => {
   return (
     <div className='relative overflow-x-auto shadow-md sm:rounded-lg'>
       <h2 className="text-3xl font-bold p-3">books</h2>
-
+      {genreSelected ? <>in genre <span className='font-bold'>{genreSelected}</span> </> : <></>}
       <table className='w-full text-left text-gray-500'>
         <thead className='text-s text-gray-700 '>
           <tr className='bg-white border-b hover:bg-gray-100'>
-            <th></th>
+            <th className='px-6 py-4'>book</th>
             <th className='px-6 py-4'>author</th>
             <th className='px-6 py-4'>published</th>
           </tr>

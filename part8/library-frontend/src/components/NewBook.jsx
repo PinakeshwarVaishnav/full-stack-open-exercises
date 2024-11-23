@@ -54,6 +54,7 @@ const NewBook = () => {
         <div>
           title
           <input
+            required
             className='border-2 border-gray-300 rounded-md '
             value={title}
             onChange={({ target }) => setTitle(target.value)}
@@ -62,6 +63,7 @@ const NewBook = () => {
         <div>
           author
           <input
+            required
             className='border-2 border-gray-300 rounded-md '
             value={author}
             onChange={({ target }) => setAuthor(target.value)}
@@ -70,6 +72,7 @@ const NewBook = () => {
         <div>
           published
           <input
+            required
             className='border-2 border-gray-300 rounded-md '
             type="number"
             value={published}
@@ -78,6 +81,7 @@ const NewBook = () => {
         </div>
         <div>
           <input
+            required
             className='border-2 border-gray-300 rounded-md '
             value={genre}
             onChange={({ target }) => setGenre(target.value)}
