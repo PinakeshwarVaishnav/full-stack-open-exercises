@@ -77,6 +77,9 @@ const resolvers = {
       }
     },
 
+    // optimized implementation of allAuthors resolver using mongodb aggregation
+    // this approach uses $lookup to fetch authors and their book counts in a singl query,
+    // effectively avoiding the n+1 problem and improving performance
     allAuthors: async () => {
       const authorsWithBookCount = await Author.aggregate([
         {
