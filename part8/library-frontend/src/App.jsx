@@ -19,8 +19,11 @@ const App = () => {
 
   useEffect(() => {
     setToken(localStorage.getItem('user-token'))
-    console.log('user token is ', token)
   }, [])
+
+  useEffect(() => {
+    console.log('user token is ', token)
+  })
 
   return (
     <Router>
