@@ -51,6 +51,10 @@ addBook(title: String!, author:String!, published: Int!, genres: [String!]!): Bo
 
 editAuthor(name: String!, setBornTo: Int!): Author
 }
+
+type Subscription {
+bookAdded: Book!
+}
 `;
 
-module.exports = { typeDefs };
+module.exports = typeDefs;
