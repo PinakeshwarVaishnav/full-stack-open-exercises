@@ -81,7 +81,6 @@ const NewBook = () => {
         </div>
         <div>
           <input
-            required
             className='border-2 border-gray-300 rounded-md '
             value={genre}
             onChange={({ target }) => setGenre(target.value)}

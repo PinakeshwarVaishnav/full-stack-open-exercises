@@ -5,7 +5,7 @@ const Author = require("./models/author");
 const User = require("./models/user");
 const jwt = require("jsonwebtoken");
 const { PubSub } = require("graphql-subscriptions");
-const pubSub = new PubSub();
+const pubsub = new PubSub();
 
 const resolvers = {
   Query: {
@@ -82,7 +82,7 @@ const resolvers = {
         {
           $lookup: {
             from: "books",
-            localField: "name",
+            localField: "_id",
             foreignField: "author",
             as: "books",
           },
@@ -95,6 +95,7 @@ const resolvers = {
           },
         },
       ]);
+      console.log("authors with book count are", authorsWithBookCount);
       return authorsWithBookCount;
     },
   },
@@ -133,7 +134,7 @@ const resolvers = {
         });
         await book.save();
         const newBook = await book.populate("author");
-        pubSub.publish("BOOK_ADDED", { bookAdded: newBook });
+        pubsub.publish("BOOK_ADDED", { bookAdded: newBook });
         console.log("saved book", newBook);
         return newBook;
       } catch (error) {
@@ -201,7 +202,7 @@ const resolvers = {
   },
   Subscription: {
     bookAdded: {
-      subscribe: () => pubSub.asyncIterator("BOOK_ADDED"),
+      subscribe: () => pubsub.asyncIterableIterator(["BOOK_ADDED"]),
     },
   },
 };

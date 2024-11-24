@@ -4,6 +4,7 @@ import Books from "./components/Books";
 import NewBook from "./components/NewBook";
 import LoginForm from './components/LoginForm'
 import Recommendations from './components/Recommendations'
+import Notification from './components/Notification'
 import { Link, Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { useApolloClient } from "@apollo/client";
 
@@ -43,6 +44,7 @@ const App = () => {
             )}
           </div>
         </nav>
+        <Notification />
         <Routes>
           <Route path="/" element={<Authors />} />
           <Route path="/authors" element={<Authors />} />
