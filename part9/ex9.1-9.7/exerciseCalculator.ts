@@ -9,6 +9,21 @@ interface Result {
 }
 
 const calculateExercise = (dailyExHours: number[], target: number): object => {
+	const args = process.argv.slice(2)
+
+	if (args.length < 2) {
+		console.error('please provide at least 2 arguments')
+		process.exit(1)
+	}
+
+	target = parseFloat(args[0])
+	dailyExHours = args.slice(1).map(arg => parseFloat(arg))
+
+	if (isNaN(target) || dailyExHours.some(isNaN)) {
+		console.error('all arguments must be valid numbers')
+		process.exit(1)
+	}
+
 	const filteredByExHours: number[] = dailyExHours.filter((ex) => (ex !== 0))
 
 	const average: number = dailyExHours.reduce((accumulator, currentValue) => accumulator + currentValue, 0) / (dailyExHours.length)
