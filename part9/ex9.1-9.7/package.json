@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV=production ts-node ./index.ts",
-    "dev": "ts-node-dev --respawn ./index.ts",
+    "dev": "ts-node-dev ./index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "calculateBmi": "ts-node ./bmiCalculator.ts",
     "calculateExercises": "ts-node ./exerciseCalculator.ts"

@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "strict": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "strictNullChecks": true,
@@ -11,5 +14,10 @@
     "alwaysStrict": true,
     "esModuleInterop": true,
     "declaration": true,
-  }
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "exclude": [
+    "./node_modules"
+  ]
 }
