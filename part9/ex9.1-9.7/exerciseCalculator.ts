@@ -15,7 +15,6 @@ export const calculateExercise = (dailyExHours?: number[], target?: number): Res
 
 	if (!target || isNaN(target) || !dailyExHours || dailyExHours?.length < 1) {
 		console.error('please provide valid arguments')
-		process.exit(1)
 	}
 
 	const filteredByExHours: number[] = dailyExHours.filter((ex) => (ex !== 0))
