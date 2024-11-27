@@ -1,9 +1,10 @@
 import express from 'express'
 import { calculateBmi } from './bmiCalculator'
+import { calculateExercise } from './exerciseCalculator'
 
 const app = express()
 app.use(express.json())
-const port = 3000
+const port = 3003
 
 app.get('/hello', (req, res) => {
 	console.log('http request method is', req.method)
@@ -30,6 +31,23 @@ app.get('/bmi', (req, res): any => {
 		height: height,
 		bmi: result
 	})
+})
+
+app.post('/exercises', (req, res): any => {
+	console.log('request method is', req)
+	const { daily_exercises, target } = req.body
+
+	if (!daily_exercises || !target) {
+		return res.status(400).json({ error: 'parameters missing' })
+	}
+
+	if (!Array.isArray(daily_exercises) || typeof target !== 'number') {
+		return res.status(400).json({ error: 'malformatted parameters' })
+	}
+
+	const result = calculateExercise(daily_exercises, target)
+
+	res.json(result)
 })
 
 app.listen(port, () => {

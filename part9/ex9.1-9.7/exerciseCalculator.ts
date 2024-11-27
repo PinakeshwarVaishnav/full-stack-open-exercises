@@ -8,19 +8,18 @@ interface Result {
 	average: number
 }
 
-const calculateExercise = (dailyExHours: number[], target: number): object => {
+export const calculateExercise = (dailyExHours?: number[], target?: number): Result => {
 	const args = process.argv.slice(2)
 
-	if (args.length < 2) {
-		console.error('please provide at least 2 arguments')
-		process.exit(1)
+	if (!target && args.length > 0) {
+		target = parseFloat(args[0])
+		dailyExHours = args.slice(1).map(arg => parseFloat(arg))
+
 	}
 
-	target = parseFloat(args[0])
-	dailyExHours = args.slice(1).map(arg => parseFloat(arg))
 
-	if (isNaN(target) || dailyExHours.some(isNaN)) {
-		console.error('all arguments must be valid numbers')
+	if (!target || isNaN(target) || !dailyExHours || dailyExHours?.length < 1) {
+		console.error('please provide valid arguments')
 		process.exit(1)
 	}
 
@@ -37,7 +36,7 @@ const calculateExercise = (dailyExHours: number[], target: number): object => {
 		ratingDescription = 'well done, target reached'
 		success = true
 	} else if (average < target && average > 0) {
-		rating = 2
+		rating = 1
 		ratingDescription = 'not too bad but could be better'
 		success = false
 	} else {
