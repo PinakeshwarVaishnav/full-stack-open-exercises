@@ -10,13 +10,8 @@ interface Result {
 
 export const calculateExercise = (dailyExHours?: number[], target?: number): Result => {
 	const args = process.argv.slice(2)
-
-	if (!target && args.length > 0) {
-		target = parseFloat(args[0])
-		dailyExHours = args.slice(1).map(arg => parseFloat(arg))
-
-	}
-
+	target = parseFloat(args[0])
+	dailyExHours = args.slice(1).map(arg => parseFloat(arg))
 
 	if (!target || isNaN(target) || !dailyExHours || dailyExHours?.length < 1) {
 		console.error('please provide valid arguments')
