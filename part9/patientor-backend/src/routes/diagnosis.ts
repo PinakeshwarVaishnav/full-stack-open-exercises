@@ -4,7 +4,7 @@ import data from '../../data/diagnoses';
 const router = Router();
 
 router.get('/', (req: Request, res: Response): any => {
-	console.log('http method for dianoses route is ', req);
+	console.log('http method for diagnoses route is ', req.method);
 	res.json(data);
 });
 
