@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import diagnosis from './routes/diagnosis';
 
 const app = express();
 app.use(express.json());
@@ -16,6 +17,7 @@ const corsOptions: cors.CorsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use('/api/diagnoses', diagnosis);
 
 app.get('/ping', (_req, res) => {
 	console.log('someone pinged here');
