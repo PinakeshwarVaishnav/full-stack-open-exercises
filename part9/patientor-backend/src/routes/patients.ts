@@ -1,8 +1,7 @@
 import { Router, Request, Response } from 'express';
-import { v1 as uuid } from 'uuid';
 import data from '../../data/patients';
 import { PatientWithoutSSN } from '../types/PatientWithoutSSN';
-import { Patient } from '../types/Patient';
+import toNewPatient from '../utils';
 
 const router = Router();
 
@@ -14,26 +13,19 @@ router.get('/', (req: Request, res: Response): any => {
 
 router.post('/', (req: Request, res: Response): any => {
 	console.log('request method for patients is', req.method);
-	const { name, dateOfBirth, ssn, gender, occupation }: Patient = req.body;
+	try {
+		const newPatient = toNewPatient(req.body);
 
-	if (!name || !dateOfBirth || !ssn || !gender || !occupation) {
-		res.status(400).json({ error: 'missing required fields' });
-		return;
+		data.push(newPatient);
+
+		res.status(201).json(newPatient);
+	} catch (error: unknown) {
+		let errorMessage = 'something went wrong';
+		if (error instanceof Error) {
+			errorMessage += ' Error: ' + error.message;
+		}
+		res.status(400).send(errorMessage);
 	}
-
-	const newPatient: Patient = {
-		id: uuid(),
-		name,
-		dateOfBirth,
-		ssn,
-		gender,
-		occupation
-	};
-
-	data.push(newPatient);
-
-	res.status(201).json(newPatient);
-
 });
 
 export default router;
