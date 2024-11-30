@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import data from '../../data/patients';
 import { PatientWithoutSSN } from '../types/PatientWithoutSSN';
 import toNewPatient from '../utils';
+import { z } from 'zod';
 
 const router = Router();
 
@@ -20,11 +21,11 @@ router.post('/', (req: Request, res: Response): any => {
 
 		res.status(201).json(newPatient);
 	} catch (error: unknown) {
-		let errorMessage = 'something went wrong';
-		if (error instanceof Error) {
-			errorMessage += ' Error: ' + error.message;
+		if (error instanceof z.ZodError) {
+			res.status(400).send({ error: error.issues });
+		} else {
+			res.status(400).send({ error: 'unknown error' });
 		}
-		res.status(400).send(errorMessage);
 	}
 });
 
