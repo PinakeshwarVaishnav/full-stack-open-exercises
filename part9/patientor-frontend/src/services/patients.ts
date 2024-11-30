@@ -17,6 +17,7 @@ const create = async (object: PatientFormValues) => {
     object
   );
 
+  console.log('data received after saving new patient is', data);
   return data;
 };
 

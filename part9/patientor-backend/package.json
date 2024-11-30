@@ -20,6 +20,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "cors": "^2.8.5"
+    "cors": "^2.8.5",
+    "uuid": "^11.0.3"
   }
 }
