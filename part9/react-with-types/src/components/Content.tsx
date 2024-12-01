@@ -1,7 +1,5 @@
-type CoursePart = {
-  name: string,
-  exerciseCount: number
-}
+import Part from "./Part"
+import { CoursePart } from "../types/types"
 
 type CoursePartProps = {
   courseParts: CoursePart[]
@@ -11,9 +9,7 @@ const Content: React.FC<CoursePartProps> = ({ courseParts }) => {
   return (
     <div>
       {courseParts.map(coursePart => (
-        <div key={coursePart.name}>
-          {coursePart.name} {coursePart.exerciseCount}
-        </div>
+        <Part key={coursePart.name} coursePart={coursePart} />
       ))}
     </div >
   )
