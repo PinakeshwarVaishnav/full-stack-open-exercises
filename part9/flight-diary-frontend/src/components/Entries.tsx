@@ -27,12 +27,12 @@ const Entries: React.FC = () => {
 
   return (
     <div>
-      <h1>Diary Entries</h1>
+      <h1 className="text-3xl font-extrabold text-gray-800 leading-tight">Diary Entries</h1>
       {entries.map((entry) => (
-        <div key={entry.id}>
-          <h3>{entry.date}</h3>
-          <p>visibility: {entry.visibility}</p>
-          <p>weather: {entry.weather}</p>
+        <div key={entry.id} className="bg-white shadow-md rounded-lg p-6 mb-4 transition-transform transform hover:scale-105">
+          <h3 className="text-xl font-bold text-blue-600">{entry.date}</h3>
+          <p className="text-gray-600">visibility: {entry.visibility}</p>
+          <p className="text-gray-600">weather: {entry.weather}</p>
         </div>
       ))}
     </div>
