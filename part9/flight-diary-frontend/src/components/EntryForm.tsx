@@ -6,19 +6,19 @@ const EntryForm: React.FC = () => {
   const [visibility, setVisibility] = useState('')
   const [weather, setWeather] = useState('')
   const [comment, setComment] = useState('')
-  const [diaryEntry, setDiaryEntry] = useState({})
 
   const handleSubmit = async (event: React.FormEvent) => {
     event?.preventDefault()
 
     try {
-      setDiaryEntry({
+      const diaryEntry = {
         date: date,
         visibility: visibility,
         weather: weather,
         comment: comment
-      })
+      }
       console.log('new created diary entry is', diaryEntry)
+
 
       const response = await axios.post('http://localhost:3000/api/diaries', diaryEntry)
       console.log('response after saving new diary entry is', response.data)
@@ -26,9 +26,11 @@ const EntryForm: React.FC = () => {
       setVisibility('')
       setWeather('')
       setComment('')
-      setDiaryEntry({})
     } catch (error) {
-      console.log('error saving new entry', error)
+      if (axios.isAxiosError(error)) {
+        console.log('error saving new entry', error)
+        alert(error.response?.data)
+      }
     }
   }
 
