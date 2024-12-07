@@ -2,17 +2,22 @@ import { useParams } from "react-router-dom";
 import { Patient } from "../types/Patient";
 import patientService from "../services/patients";
 import { useEffect, useState } from "react";
+import getAll from "../services/diagnosis";
+import { Diagnosis } from "../types/Diagnosis";
 
 const PatientDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   console.log("id received is", id);
   const [patient, setPatient] = useState<Patient | null>(null);
+  const [diagnosis, setDiagnosis] = useState<Diagnosis[] | null>(null);
 
   useEffect(() => {
     const getPatientById = async () => {
       if (id) {
-        const response = await patientService.getById(id);
-        setPatient(response);
+        const patientResponse = await patientService.getById(id);
+        setPatient(patientResponse);
+        const diagnosisResponse = await getAll();
+        setDiagnosis(diagnosisResponse);
       } else {
         console.log("patient id is undefined");
       }
@@ -20,11 +25,12 @@ const PatientDetail: React.FC = () => {
     getPatientById();
   }, [id]);
 
-  if (!patient) {
+  if (!patient || !diagnosis) {
     return <div>Loading...</div>;
   }
 
   console.log("patient is", patient);
+  console.log("diagnosis are", diagnosis);
 
   const diagnosisCodes = patient.entries.flatMap(
     (entry) => entry.diagnosisCodes || [],
@@ -45,7 +51,14 @@ const PatientDetail: React.FC = () => {
       </p>
       <ul>
         {diagnosisCodes.map((code) => (
-          <li>{code}</li>
+          <li key={code}>
+            {code}{" "}
+            {diagnosis.map((diagnosis) => {
+              if (code === diagnosis.code) {
+                return diagnosis.name;
+              }
+            })}
+          </li>
         ))}
       </ul>
     </div>
