@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { Patient } from "../types";
+import { Patient } from "../types/Patient";
 import patientService from "../services/patients";
 import { useEffect, useState } from "react";
 
@@ -26,6 +26,10 @@ const PatientDetail: React.FC = () => {
 
   console.log("patient is", patient);
 
+  const diagnosisCodes = patient.entries.flatMap(
+    (entry) => entry.diagnosisCodes || [],
+  );
+
   return (
     <div>
       <h1>Patient Details</h1>
@@ -34,6 +38,16 @@ const PatientDetail: React.FC = () => {
       <p>Gender: {patient.gender}</p>
       <p>Occupation: {patient.occupation}</p>
       <p>Date of Birth: {patient.dateOfBirth}</p>
+      <h3>entries</h3>
+      <p>
+        {patient.entries.map((entry) => entry.date)}{" "}
+        {patient.entries.map((entry) => entry.description)}
+      </p>
+      <ul>
+        {diagnosisCodes.map((code) => (
+          <li>{code}</li>
+        ))}
+      </ul>
     </div>
   );
 };

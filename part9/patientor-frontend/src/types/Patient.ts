@@ -1,10 +1,4 @@
-export interface Diagnosis {
-  code: string;
-  name: string;
-  latin?: string;
-}
-
-interface Entry {}
+import { Entry } from "./Entry";
 
 export enum Gender {
   Male = "male",
@@ -23,4 +17,3 @@ export interface Patient {
 }
 
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
-
