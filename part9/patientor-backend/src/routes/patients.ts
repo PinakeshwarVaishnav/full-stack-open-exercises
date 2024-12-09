@@ -1,12 +1,12 @@
 import { Router, Request, Response } from "express";
 import data from "../../data/patients";
 import { PatientWithoutSSN } from "../types/PatientWithoutSSN";
-import toNewPatient from "../utils";
+import { toNewPatient, toNewEntry } from "../utils";
 import { z } from "zod";
 
 const router = Router();
 
-router.get("/", (req: Request, res: Response): any => {
+router.get("/", (req: Request, res: Response): void => {
   console.log("request method for patients is", req.method);
   const patientsWithoutSSN: PatientWithoutSSN[] = data.map(
     ({ ssn: _ssn, ...rest }) => rest,
@@ -28,7 +28,7 @@ router.get("/:id", (req: Request, res: Response): void => {
   }
 });
 
-router.post("/", (req: Request, res: Response): any => {
+router.post("/", (req: Request, res: Response): void => {
   console.log("request method for patients is", req.method);
   try {
     const newPatient = toNewPatient(req.body);
@@ -36,6 +36,40 @@ router.post("/", (req: Request, res: Response): any => {
     data.push(newPatient);
 
     res.status(201).json(newPatient);
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      res.status(400).send({ error: error.issues });
+    } else {
+      res.status(400).send({ error: "unknown error" });
+    }
+  }
+});
+
+router.post("/:id/entries", (req: Request, res: Response): any => {
+  console.log(
+    "request method for adding new entries for a patient is",
+    req.method,
+  );
+
+  const patientId = req.params.id;
+
+  try {
+    const newEntry = toNewEntry(req.body);
+
+    const patient = data.find((patient) => patient.id === patientId);
+
+    if (!patient) {
+      return res
+        .status(404)
+        .json({ error: "adding entry failed: patient not found" });
+    }
+
+    patient.entries.push(newEntry);
+
+    res.status(201).json({
+      message: `Entry for the patient ${patient.name} added successfully`,
+      newEntry,
+    });
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       res.status(400).send({ error: error.issues });

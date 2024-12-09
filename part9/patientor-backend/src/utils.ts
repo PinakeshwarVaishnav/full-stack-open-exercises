@@ -1,7 +1,7 @@
 import { Patient, Gender } from "./types/Patient";
 import { v1 as uuid } from "uuid";
 import { z } from "zod";
-import { HealthCheckRating } from "./types/Entry";
+import { Entry, HealthCheckRating } from "./types/Entry";
 
 const id = uuid();
 
@@ -18,6 +18,10 @@ const HealthCheckEntrySchema = BaseEntrySchema.extend({
   healthCheckRating: z.nativeEnum(HealthCheckRating),
 });
 
+const HealthCheckEntryWithoutIdSchema = HealthCheckEntrySchema.omit({
+  id: true,
+});
+
 const OccupationalHealthcareEntrySchema = BaseEntrySchema.extend({
   type: z.literal("OccupationalHealthcare"),
   employerName: z.string(),
@@ -29,6 +33,9 @@ const OccupationalHealthcareEntrySchema = BaseEntrySchema.extend({
     .optional(),
 });
 
+const OccupationalHealthcareEntryWithoutIdSchema =
+  OccupationalHealthcareEntrySchema.omit({ id: true });
+
 const HospitalEntrySchema = BaseEntrySchema.extend({
   type: z.literal("Hospital"),
   discharge: z.object({
@@ -37,10 +44,18 @@ const HospitalEntrySchema = BaseEntrySchema.extend({
   }),
 });
 
+const HospitalEntryWithoutIdSchema = HospitalEntrySchema.omit({ id: true });
+
 const EntrySchema = z.union([
   HealthCheckEntrySchema,
   OccupationalHealthcareEntrySchema,
   HospitalEntrySchema,
+]);
+
+const EntryWithoutIdSchema = z.union([
+  HealthCheckEntryWithoutIdSchema,
+  OccupationalHealthcareEntryWithoutIdSchema,
+  HospitalEntryWithoutIdSchema,
 ]);
 
 export const newPatientSchema = z.object({
@@ -62,4 +77,14 @@ export const toNewPatient = (object: unknown): Patient => {
   return newPatient;
 };
 
-export default toNewPatient;
+export const toNewEntry = (object: unknown): Entry => {
+  const validatedNewEntry = EntryWithoutIdSchema.parse(object);
+  console.log("new created entry passed for validating is", validatedNewEntry);
+
+  const newEntry = {
+    id: id,
+    ...validatedNewEntry,
+  };
+
+  return newEntry;
+};
