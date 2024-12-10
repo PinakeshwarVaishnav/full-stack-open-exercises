@@ -146,7 +146,7 @@ const EntryForm: React.FC<EntryFormProps> = ({ id }) => {
                   Date
                   <input
                     required
-                    type="text"
+                    type="date"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
                   />
@@ -192,7 +192,7 @@ const EntryForm: React.FC<EntryFormProps> = ({ id }) => {
                 <label>
                   Discharge Date
                   <input
-                    type="text"
+                    type="date"
                     value={dischargeDate}
                     onChange={(e) => setDischargeDate(e.target.value)}
                   />
@@ -221,7 +221,7 @@ const EntryForm: React.FC<EntryFormProps> = ({ id }) => {
                 <label>
                   Sickleave Start Date
                   <input
-                    type="text"
+                    type="date"
                     value={sickLeaveStartDate}
                     onChange={(e) => setSickLeaveStartDate(e.target.value)}
                   />
@@ -230,7 +230,7 @@ const EntryForm: React.FC<EntryFormProps> = ({ id }) => {
                 <label>
                   Sickleave End Date
                   <input
-                    type="text"
+                    type="date"
                     value={sickLeaveEndDate}
                     onChange={(e) => setSickLeaveEndDate(e.target.value)}
                   />
