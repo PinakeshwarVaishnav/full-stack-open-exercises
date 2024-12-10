@@ -3,6 +3,7 @@ import { Patient } from "../types/Patient";
 import patientService from "../services/patients";
 import { useEffect, useState } from "react";
 import EntryDetail from "./EntryDetail";
+import EntryForm from "./EntryForm";
 
 const PatientDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -36,6 +37,7 @@ const PatientDetail: React.FC = () => {
       <p>Occupation: {patient.occupation}</p>
       <p>Date of Birth: {patient.dateOfBirth}</p>
       <h3>entries</h3>
+      <EntryForm id={patient.id}/>
       {patient.entries.map((entry) => (
         <EntryDetail entry={entry} key={entry.id} />
       ))}

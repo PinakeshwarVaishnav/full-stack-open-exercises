@@ -2,6 +2,7 @@ import axios from "axios";
 import { Patient, PatientFormValues } from "../types/Patient";
 
 import { apiBaseUrl } from "../constants";
+import { EntryWithoutId } from "../types/Entry";
 
 const getAll = async () => {
   const { data } = await axios.get<Patient[]>(`${apiBaseUrl}/patients`);
@@ -22,8 +23,19 @@ const create = async (object: PatientFormValues) => {
   return data;
 };
 
+const createNewEntry = async (object: EntryWithoutId, patientId: string) => {
+  const { data } = await axios.post<EntryWithoutId>(
+    `${apiBaseUrl}/patients/${patientId}/entries`,
+    object,
+  );
+
+  console.log("data received after saving new entry is", data);
+  return data;
+};
+
 export default {
   getAll,
   getById,
   create,
+  createNewEntry,
 };
