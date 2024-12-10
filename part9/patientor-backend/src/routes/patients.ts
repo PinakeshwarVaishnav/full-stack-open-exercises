@@ -47,8 +47,8 @@ router.post("/", (req: Request, res: Response): void => {
 
 router.post("/:id/entries", (req: Request, res: Response): any => {
   console.log(
-    "request method for adding new entries for a patient is",
-    req.method,
+    "request for new entry is",
+    req.body,
   );
 
   const patientId = req.params.id;

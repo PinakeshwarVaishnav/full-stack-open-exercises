@@ -1,7 +1,12 @@
 import Select, { SingleValue } from "react-select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { OptionType } from "../types/Option";
 import patientService from "../services/patients";
+import {
+  HealthCheckEntry,
+  HospitalEntry,
+  OccupationalHealthcareEntry,
+} from "../types/Entry";
 
 interface EntryFormProps {
   id: string;
@@ -21,6 +26,10 @@ const EntryForm: React.FC<EntryFormProps> = ({ id }) => {
   const [dischargeCriteria, setDischargeCriteria] = useState<string>("");
   const [diagnosisCodes, setDiagnosisCodes] = useState<string>("");
 
+  useEffect(() => {
+    console.log("the value of entry type is", entryType);
+  }, [entryType]);
+
   const toggleFormVisibility = () => {
     setFormVisible((prevState) => !prevState);
   };
@@ -35,7 +44,7 @@ const EntryForm: React.FC<EntryFormProps> = ({ id }) => {
 
     switch (entryType) {
       case "HealthCheck":
-        const newEntry = {
+        const newHealthEntry = {
           description: description,
           date: date,
           specialist: specialist,
@@ -43,8 +52,56 @@ const EntryForm: React.FC<EntryFormProps> = ({ id }) => {
           type: "HealthCheck",
           healthCheckRating: healthCheckRating,
         };
-        const returnedEntry = patientService.createNewEntry(newEntry, id);
-        console.log("new submitted entry is", returnedEntry);
+        const returnedHealthEntry = patientService.createNewEntry(
+          newHealthEntry as HealthCheckEntry,
+          id,
+        );
+        console.log("new created entry is", returnedHealthEntry);
+        setEntryType(null);
+        break;
+      case "Hospital":
+        const newHospitalEntry = {
+          description: description,
+          date: date,
+          specialist: specialist,
+          diagnosisCodes: diagnosisCodes ? diagnosisCodes : undefined,
+          type: "Hospital",
+          discharge: {
+            date: dischargeDate,
+            criteria: dischargeCriteria,
+          },
+        };
+        const returnedHospitalEntry = patientService.createNewEntry(
+          newHospitalEntry as HospitalEntry,
+          id,
+        );
+        console.log("new created entry is", returnedHospitalEntry);
+        setEntryType(null);
+        break;
+      case "OccupationalHealthCare":
+        const newOccupationalHealthCare = {
+          description: description,
+          date: date,
+          specialist: specialist,
+          diagnosisCodes: diagnosisCodes ? diagnosisCodes : undefined,
+          type: "OccupationalHealthcare",
+          sickLeave: {
+            startDate: sickLeaveStartDate,
+            endDate: sickLeaveEndDate,
+          },
+          employerName: employerName
+        };
+        const returnedOccupationalHealthCareEntry =
+          patientService.createNewEntry(
+            newOccupationalHealthCare as OccupationalHealthcareEntry,
+            id,
+          );
+        console.log(
+          "new created entry is",
+          returnedOccupationalHealthCareEntry,
+        );
+        setEntryType(null);
+        break;
     }
 
     //
@@ -72,46 +129,50 @@ const EntryForm: React.FC<EntryFormProps> = ({ id }) => {
               ></Select>
             </label>
             <br />
-            <h3>New {entryType} entry</h3>
-            <label>
-              Description
-              <input
-                required
-                type="text"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-            </label>
-            <br />
-            <label>
-              Date
-              <input
-                required
-                type="text"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-              />
-            </label>
-            <br />
-            <label>
-              Specialist
-              <input
-                required
-                type="text"
-                value={specialist}
-                onChange={(e) => setSpecialist(e.target.value)}
-              />
-            </label>
-            <br />
-            <label>
-              Diagnosis codes
-              <input
-                type="text"
-                value={diagnosisCodes}
-                onChange={(e) => setDiagnosisCodes(e.target.value)}
-              />
-            </label>
-            <br />
+            {entryType && (
+              <div>
+                <h3>New {entryType} entry</h3>
+                <label>
+                  Description
+                  <input
+                    required
+                    type="text"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  />
+                </label>
+                <br />
+                <label>
+                  Date
+                  <input
+                    required
+                    type="text"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                  />
+                </label>
+                <br />
+                <label>
+                  Specialist
+                  <input
+                    required
+                    type="text"
+                    value={specialist}
+                    onChange={(e) => setSpecialist(e.target.value)}
+                  />
+                </label>
+                <br />
+                <label>
+                  Diagnosis codes
+                  <input
+                    type="text"
+                    value={diagnosisCodes}
+                    onChange={(e) => setDiagnosisCodes(e.target.value)}
+                  />
+                </label>
+                <br />
+              </div>
+            )}
             {entryType === "HealthCheck" && (
               <>
                 <label>
@@ -126,6 +187,57 @@ const EntryForm: React.FC<EntryFormProps> = ({ id }) => {
                 </label>
               </>
             )}
+            {entryType === "Hospital" && (
+              <>
+                <label>
+                  Discharge Date
+                  <input
+                    type="text"
+                    value={dischargeDate}
+                    onChange={(e) => setDischargeDate(e.target.value)}
+                  />
+                </label>
+                <label>
+                  Discharge Criteria
+                  <input
+                    type="text"
+                    value={dischargeCriteria}
+                    onChange={(e) => setDischargeCriteria(e.target.value)}
+                  />
+                </label>
+              </>
+            )}
+            {entryType === "OccupationalHealthCare" && (
+              <>
+                <label>
+                  Employer Name
+                  <input
+                    type="text"
+                    value={employerName}
+                    onChange={(e) => setEmployerName(e.target.value)}
+                  />
+                </label>
+                <br />
+                <label>
+                  Sickleave Start Date
+                  <input
+                    type="text"
+                    value={sickLeaveStartDate}
+                    onChange={(e) => setSickLeaveStartDate(e.target.value)}
+                  />
+                </label>
+                <br />
+                <label>
+                  Sickleave End Date
+                  <input
+                    type="text"
+                    value={sickLeaveEndDate}
+                    onChange={(e) => setSickLeaveEndDate(e.target.value)}
+                  />
+                </label>
+              </>
+            )}
+
             <br />
             <button type="submit">add entry</button>
           </form>
